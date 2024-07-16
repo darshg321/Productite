@@ -4,7 +4,7 @@ import {useState} from "react";
 
 export function Stopwatch(props) {
     return (
-        <View style={styles.container}>
+        <View>
             <Text style={styles.timeText}>{props.time}</Text>
         </View>
     )

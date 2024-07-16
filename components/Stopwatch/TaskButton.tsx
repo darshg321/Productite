@@ -1,6 +1,12 @@
 import {AntDesign, Feather} from "@expo/vector-icons";
 import {View} from "react-native";
-import {TaskStatus} from "@/app/(tabs)/timetracker";
+
+export enum TaskStatus {
+    notStarted,
+    running,
+    paused,
+    finished
+}
 
 export default function TaskButton(props) {
     if (props.taskStatus === TaskStatus.running) {
@@ -13,7 +19,7 @@ export default function TaskButton(props) {
     } else if (props.taskStatus === TaskStatus.paused) {
         return (
             <View>
-                <AntDesign name="playcircleo" size={24} color="black" onPress={props.onPressStart} />
+                <AntDesign name="playcircleo" size={24} color="black" onPress={props.onPressPlay} />
                 <Feather name="stop-circle" size={24} color="black" onPress={props.onPressStop} />
             </View>
         )
