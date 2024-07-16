@@ -4,6 +4,8 @@ import {useEffect, useState} from "react";
 import TaskButton from "@/components/Stopwatch/TaskButton";
 import {TaskStatus} from "@/components/Stopwatch/TaskButton";
 
+// add limit to time
+
 function msToTime(duration) {
     let seconds = parseInt((duration/1000)%60)
         , minutes = parseInt((duration/(1000*60))%60)
@@ -20,48 +22,48 @@ export default function Timetracker() {
     const [time, setTime] = useState(0);
     const [startTime, setStartTime] = useState(0);
     const [pauseTime, setPauseTime] = useState(0);
-    const [task, setTask] = useState("");
+    const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
 
     function startTask() {
+        setTime(0);
+        setTotalPausedDuration(0);
         setStartTime(Date.now());
         setTaskStatus(TaskStatus.running);
-    //     do something with task here
-    //     start foreground service
-    //     set timer to 0
     }
+
     function stopTask() {
-        console.log(Date.now() - startTime);
-        setTime(Date.now() - startTime);
-        console.log(msToTime(Date.now()+time-startTime));
-    //     setStartTime(0);
-        setTaskStatus(TaskStatus.finished)
+        setTime(Date.now() - startTime - totalPausedDuration);
+        setTaskStatus(TaskStatus.finished);
+        // Reset paused duration on stop
+        //     do something with task here
+        //     start foreground service
+        //     set timer to 0
     }
+
     function pauseTask() {
         setPauseTime(Date.now());
         setTaskStatus(TaskStatus.paused);
     }
+
     function playTask() {
-        setTime(time - pauseTime);
-        setPauseTime(0);
+        if (pauseTime !== 0) {
+            // Update total paused duration
+            setTotalPausedDuration(totalPausedDuration + (Date.now() - pauseTime));
+            setPauseTime(0); // Reset pauseTime
+        }
         setTaskStatus(TaskStatus.running);
     }
-    // if (taskStatus === TaskStatus.running) {
-    //     const interval = setInterval(() => {
-    //         setTime(time + 1);
-    //     }, 1);
-    // }
+
     useEffect(() => {
         let interval = null;
 
         if (taskStatus === TaskStatus.running) {
             interval = setInterval(() => {
-                // Calculate elapsed time without adjusting startTime
                 const now = Date.now();
-                const pausedDuration = pauseTime ? now - pauseTime : 0;
-                setTime(now - startTime - pausedDuration);
-            }, 1000); // Update every second
-        } else if (taskStatus === TaskStatus.finished || taskStatus === TaskStatus.paused) {
+                setTime(now - startTime - totalPausedDuration);
+            }, 1000);
+        } else {
             clearInterval(interval);
         }
 
@@ -70,16 +72,15 @@ export default function Timetracker() {
                 clearInterval(interval);
             }
         };
-    }, [taskStatus, startTime, pauseTime]);
+    }, [taskStatus, startTime, totalPausedDuration]);
 
     return (
         <View style={styles.container}>
-            <Stopwatch time={startTime | time ? (msToTime(Date.now() - startTime)) : "00:00:00"}></Stopwatch>
-            {/*<Stopwatch time={"00:00:00"}></Stopwatch>*/}
-            <TextInput style={styles.input} onChangeText={setTask} placeholder={"Name of Task"} />
+            <Stopwatch time={msToTime(time)}></Stopwatch>
+            <TextInput style={styles.input} placeholder={"Name of Task"} />
             <TaskButton taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask} onPressStop={stopTask}/>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
