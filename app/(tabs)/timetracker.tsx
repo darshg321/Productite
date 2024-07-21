@@ -1,15 +1,29 @@
 import {Text, TextInput, View, StyleSheet, Button} from "react-native";
-import {Stopwatch} from "@/components/Stopwatch/Stopwatch";
+import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
-import TaskButton from "@/components/Stopwatch/TaskButton";
-import {TaskStatus} from "@/components/Stopwatch/TaskButton";
+import TaskButton from "@/components/timetracker/TaskButton";
+import {TaskStatus} from "@/components/timetracker/TaskButton";
+import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // add limit to time
 
+async function storeConfirmationData(data) {
+    try {
+        const existingData = await AsyncStorage.getItem('confirmationData');
+        const currentData = existingData ? JSON.parse(existingData) : [];
+        const updatedData = [...currentData, data];
+        await AsyncStorage.setItem('confirmationData', JSON.stringify(updatedData));
+        console.log('Data appended to AsyncStorage:', data);
+    } catch (error) {
+        console.error('Error appending data to AsyncStorage:', error);
+    }
+}
+
 function msToTime(duration) {
-    let seconds = parseInt((duration/1000)%60)
-        , minutes = parseInt((duration/(1000*60))%60)
-        , hours = parseInt((duration/(1000*60*60))%24);
+    let seconds = parseInt((duration/1000)%60),
+        minutes = parseInt((duration/(1000*60))%60),
+        hours = parseInt((duration/(1000*60*60))%24);
 
     hours = (hours < 10) ? "0" + hours : hours;
     minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -19,6 +33,7 @@ function msToTime(duration) {
 }
 
 export default function Timetracker() {
+    const [taskName, setTaskName] = useState("");
     const [time, setTime] = useState(0);
     const [startTime, setStartTime] = useState(0);
     const [pauseTime, setPauseTime] = useState(0);
@@ -30,6 +45,7 @@ export default function Timetracker() {
         setTotalPausedDuration(0);
         setStartTime(Date.now());
         setTaskStatus(TaskStatus.running);
+    //     start foreground service
     }
 
     function stopTask() {
@@ -37,8 +53,11 @@ export default function Timetracker() {
         setTaskStatus(TaskStatus.finished);
         // Reset paused duration on stop
         //     do something with task here
-        //     start foreground service
         //     set timer to 0
+    //     add task and time as confirmation here
+        storeConfirmationData([{task: taskName, category: "Category 1", time: msToTime(time)}])
+            .then(r => {console.log(r)});
+
     }
 
     function pauseTask() {
@@ -77,8 +96,9 @@ export default function Timetracker() {
     return (
         <View style={styles.container}>
             <Stopwatch time={msToTime(time)}></Stopwatch>
-            <TextInput style={styles.input} placeholder={"Name of Task"} />
+            <TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>
             <TaskButton taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask} onPressStop={stopTask}/>
+            <TimeConfirmationView data={confirmationData}/>
         </View>
     );
 }

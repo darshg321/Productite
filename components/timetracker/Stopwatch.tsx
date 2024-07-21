@@ -1,6 +1,4 @@
 import {View, Text, StyleSheet} from "react-native";
-import {useState} from "react";
-
 
 export function Stopwatch(props) {
     return (
