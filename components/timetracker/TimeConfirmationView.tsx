@@ -6,7 +6,8 @@ export default function TimeConfirmationView(props) {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             {props.data.map((item, index) => (
-                <TimeConfirmationBox key={index} task={item.task} category={item.category} time={item.time} />
+                <TimeConfirmationBox key={index} task={item.task} category={item.category} time={item.time}
+                                     onConfirm={props.onConfirm} onDecline={props.onDecline}/>
             ))}
         </ScrollView>
     )

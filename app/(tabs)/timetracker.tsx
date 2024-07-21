@@ -6,7 +6,15 @@ import {TaskStatus} from "@/components/timetracker/TaskButton";
 import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// add limit to time
+// TODO remove
+async function clearConfirmationData() {
+    try {
+        await AsyncStorage.removeItem('confirmationData');
+        console.log('Data cleared from AsyncStorage');
+    } catch (error) {
+        console.error('Error clearing data from AsyncStorage:', error);
+    }
+}
 
 async function storeConfirmationData(data) {
     try {
@@ -18,6 +26,26 @@ async function storeConfirmationData(data) {
     } catch (error) {
         console.error('Error appending data to AsyncStorage:', error);
     }
+}
+
+async function getConfirmationData() {
+    try {
+        const data = await AsyncStorage.getItem('confirmationData');
+        return data ? JSON.parse(data) : [];
+    } catch (error) {
+        console.error('Error getting data from AsyncStorage:', error);
+        return [];
+    }
+}
+
+function declineConfirmation() {
+    // TODO
+    console.log('Declined');
+}
+
+function confirmConfirmation() {
+    // TODO
+    console.log('Confirmed');
 }
 
 function msToTime(duration) {
@@ -39,13 +67,16 @@ export default function Timetracker() {
     const [pauseTime, setPauseTime] = useState(0);
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
+    const [confirmationData, setConfirmationData] = useState([]);
+    getConfirmationData().then(data => setConfirmationData(data));
+
 
     function startTask() {
         setTime(0);
         setTotalPausedDuration(0);
         setStartTime(Date.now());
         setTaskStatus(TaskStatus.running);
-    //     start foreground service
+        //     start foreground service
     }
 
     function stopTask() {
@@ -54,10 +85,12 @@ export default function Timetracker() {
         // Reset paused duration on stop
         //     do something with task here
         //     set timer to 0
-    //     add task and time as confirmation here
-        storeConfirmationData([{task: taskName, category: "Category 1", time: msToTime(time)}])
-            .then(r => {console.log(r)});
-
+        //     add task and time as confirmation here
+        storeConfirmationData({task: taskName, category: "Category 1", time: msToTime(time)}) // FIXME
+            .then(r => {
+                console.log(r)
+            });
+        // getConfirmationData().then(data => setConfirmationData(data)); // maybe not needed
     }
 
     function pauseTask() {
@@ -80,7 +113,12 @@ export default function Timetracker() {
         if (taskStatus === TaskStatus.running) {
             interval = setInterval(() => {
                 const now = Date.now();
-                setTime(now - startTime - totalPausedDuration);
+                // Stop task if time is over 99 hours
+                if (time < 359998900) {
+                    setTime(now - startTime - totalPausedDuration);
+                } else {
+                    stopTask();
+                }
             }, 1000);
         } else {
             clearInterval(interval);
@@ -97,8 +135,9 @@ export default function Timetracker() {
         <View style={styles.container}>
             <Stopwatch time={msToTime(time)}></Stopwatch>
             <TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>
-            <TaskButton taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask} onPressStop={stopTask}/>
-            <TimeConfirmationView data={confirmationData}/>
+            <TaskButton taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask}
+                        onPressStop={stopTask}/>
+            <TimeConfirmationView data={confirmationData} onConfirm={confirmConfirmation} onDecline={declineConfirmation}/>
         </View>
     );
 }
