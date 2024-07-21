@@ -1,9 +1,7 @@
-import {Text, View, StyleSheet, Button} from "react-native";
+import {Text, View, StyleSheet} from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 
-
 export default function TimeConfirmationBox(props) {
-    // console.log(props)
     return (
         <View style={styles.container}>
             <Text style={styles.taskText}>{props.task}</Text>

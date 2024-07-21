@@ -1,10 +1,11 @@
-import {TextInput, View, StyleSheet} from "react-native";
+import {View, StyleSheet} from "react-native";
 import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
-import TaskButton from "@/components/timetracker/TaskButton";
-import {TaskStatus} from "@/components/timetracker/TaskButton";
+import TaskStatusButtons from "@/components/timetracker/TaskStatusButtons";
+import {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
 import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView";
 import * as SQLite from 'expo-sqlite';
+import TasksView from "@/components/timetracker/TasksView";
 
 const db = SQLite.openDatabaseSync('timetracker.db');
 db.runAsync(
@@ -47,7 +48,7 @@ function msToTime(duration) {
     return hours + ":" + minutes + ":" + seconds;
 }
 
-export default function Timetracker() {
+export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
     const [time, setTime] = useState(0);
     const [startTime, setStartTime] = useState(0);
@@ -70,9 +71,7 @@ export default function Timetracker() {
         setTaskStatus(TaskStatus.finished);
 
         storeConfirmationData(taskName, "Category 1", msToTime(time)) // FIXME add category
-            .then(r => {
-                console.log(r)
-            });
+
         setTime(0);
     }
 
@@ -115,10 +114,14 @@ export default function Timetracker() {
 
     return (
         <View style={styles.container}>
+            <TasksView data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
+                {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
+                {taskName: "Archery", icon: require("../../assets/images/splash.png")}]}>
+            </TasksView>
             <Stopwatch time={msToTime(time)}></Stopwatch>
-            <TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>
-            <TaskButton taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask}
-                        onPressStop={stopTask}/>
+            {/*<TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>*/}
+            <TaskStatusButtons taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask}
+                               onPressStop={stopTask}/>
             <TimeConfirmationView data={confirmationData} onConfirm={confirmConfirmation}
                                   onDecline={declineConfirmation}/>
         </View>

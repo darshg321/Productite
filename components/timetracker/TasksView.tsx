@@ -1,16 +1,16 @@
 import {ScrollView, StyleSheet} from "react-native";
-import TimeConfirmationBox from "@/components/timetracker/TimeConfirmationBox";
+import TasksButton from "@/components/timetracker/TasksButton";
 
-export default function TimeConfirmationView(props) {
+export default function TasksView(props) {
     return (
         <ScrollView contentContainerStyle={styles.container}>
             {props.data.map((item, index) => (
-                <TimeConfirmationBox key={index} task={item.task} category={item.category} time={item.time}
-                                     onConfirm={props.onConfirm} onDecline={props.onDecline}/>
+                <TasksButton key={index} taskName={item.taskName} icon={item.icon}/>
             ))}
         </ScrollView>
-    )
+        )
 }
+
 let styles = StyleSheet.create({
     container: {
         justifyContent: 'center',

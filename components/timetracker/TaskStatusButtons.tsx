@@ -8,7 +8,7 @@ export enum TaskStatus {
     finished
 }
 
-export default function TaskButton(props) {
+export default function TaskStatusButtons(props) {
     if (props.taskStatus === TaskStatus.running) {
         return (
             <View style={styles.container}>
