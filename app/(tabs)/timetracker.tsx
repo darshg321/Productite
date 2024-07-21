@@ -1,41 +1,28 @@
-import {Text, TextInput, View, StyleSheet, Button} from "react-native";
+import {TextInput, View, StyleSheet} from "react-native";
 import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
 import TaskButton from "@/components/timetracker/TaskButton";
 import {TaskStatus} from "@/components/timetracker/TaskButton";
 import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SQLite from 'expo-sqlite';
+
+const db = SQLite.openDatabaseSync('timetracker.db');
+db.runAsync(
+    'CREATE TABLE IF NOT EXISTS confirmationData (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
 
 // TODO remove
 async function clearConfirmationData() {
-    try {
-        await AsyncStorage.removeItem('confirmationData');
-        console.log('Data cleared from AsyncStorage');
-    } catch (error) {
-        console.error('Error clearing data from AsyncStorage:', error);
-    }
+    db.runAsync('DROP TABLE IF EXISTS confirmationData;')
+        .then(r => console.log(r));
 }
 
-async function storeConfirmationData(data) {
-    try {
-        const existingData = await AsyncStorage.getItem('confirmationData');
-        const currentData = existingData ? JSON.parse(existingData) : [];
-        const updatedData = [...currentData, data];
-        await AsyncStorage.setItem('confirmationData', JSON.stringify(updatedData));
-        console.log('Data appended to AsyncStorage:', data);
-    } catch (error) {
-        console.error('Error appending data to AsyncStorage:', error);
-    }
+async function storeConfirmationData(task, category, time) {
+    db.runAsync(
+        'INSERT INTO confirmationData (task, category, time) VALUES (?, ?, ?);', [task, category, time])
 }
 
 async function getConfirmationData() {
-    try {
-        const data = await AsyncStorage.getItem('confirmationData');
-        return data ? JSON.parse(data) : [];
-    } catch (error) {
-        console.error('Error getting data from AsyncStorage:', error);
-        return [];
-    }
+    return db.getAllAsync('SELECT * FROM confirmationData;');
 }
 
 function declineConfirmation() {
@@ -70,7 +57,6 @@ export default function Timetracker() {
     const [confirmationData, setConfirmationData] = useState([]);
     getConfirmationData().then(data => setConfirmationData(data));
 
-
     function startTask() {
         setTime(0);
         setTotalPausedDuration(0);
@@ -82,15 +68,12 @@ export default function Timetracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.finished);
-        // Reset paused duration on stop
-        //     do something with task here
-        //     set timer to 0
-        //     add task and time as confirmation here
-        storeConfirmationData({task: taskName, category: "Category 1", time: msToTime(time)}) // FIXME
+
+        storeConfirmationData(taskName, "Category 1", msToTime(time)) // FIXME add category
             .then(r => {
                 console.log(r)
             });
-        // getConfirmationData().then(data => setConfirmationData(data)); // maybe not needed
+        setTime(0);
     }
 
     function pauseTask() {
@@ -100,9 +83,8 @@ export default function Timetracker() {
 
     function playTask() {
         if (pauseTime !== 0) {
-            // Update total paused duration
             setTotalPausedDuration(totalPausedDuration + (Date.now() - pauseTime));
-            setPauseTime(0); // Reset pauseTime
+            setPauseTime(0);
         }
         setTaskStatus(TaskStatus.running);
     }
@@ -137,7 +119,8 @@ export default function Timetracker() {
             <TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>
             <TaskButton taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask}
                         onPressStop={stopTask}/>
-            <TimeConfirmationView data={confirmationData} onConfirm={confirmConfirmation} onDecline={declineConfirmation}/>
+            <TimeConfirmationView data={confirmationData} onConfirm={confirmConfirmation}
+                                  onDecline={declineConfirmation}/>
         </View>
     );
 }
