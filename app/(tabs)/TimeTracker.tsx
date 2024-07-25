@@ -6,34 +6,20 @@ import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView"
 import * as SQLite from 'expo-sqlite';
 import TasksGrid from "@/components/timetracker/TasksGrid";
 
-const db = SQLite.openDatabaseSync('timetracker.db');
-db.runAsync(
-    'CREATE TABLE IF NOT EXISTS confirmationData (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
-
-// Initialize the queue with a resolved promise
-const createDbOperationQueue = () => {
-    let queue = Promise.resolve();
-
-    return (operation) => {
-        queue = queue.then(() => operation().catch(err => console.error(err)));
-        return queue;
-    };
-};
-
-// Create a queue instance for database operations
-const dbQueue = createDbOperationQueue();
-
-// Enqueue operations
-dbQueue(() => clearConfirmationData());
-dbQueue(() => storeConfirmationData('Task', 'Category', 'Time'));
+async function initDb() {
+    const db = await SQLite.openDatabaseAsync('timetracker.db');
+    await db.runAsync(
+        'CREATE TABLE IF NOT EXISTS confirmationData (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
+    return db;
+}
 
 // TODO remove
-async function clearConfirmationData() {
+async function clearConfirmationData(db) {
     db.runAsync('DROP TABLE IF EXISTS confirmationData;')
         .then(r => console.log(r));
 }
 
-async function storeConfirmationData(task, category, time) {
+async function storeConfirmationData(db, task, category, time) {
     try {
         await db.runAsync(
             'INSERT INTO confirmationData (task, category, time) VALUES (?, ?, ?);',
@@ -44,7 +30,7 @@ async function storeConfirmationData(task, category, time) {
     }
 }
 
-async function getConfirmationData() {
+async function getConfirmationData(db) {
     return db.getAllAsync('SELECT * FROM confirmationData;');
 }
 
@@ -78,11 +64,13 @@ export default function TimeTracker() {
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [confirmationData, setConfirmationData] = useState([]);
+    const [db, setDb] = useState(null);
 
     useEffect(() => {
-        // getConfirmationData().then(data => setConfirmationData(data));
-        dbQueue(() => getConfirmationData()).then(data => setConfirmationData(data));
-        console.log("init data")
+        initDb().then(db => {
+            setDb(db)
+            getConfirmationData(db).then(data => setConfirmationData(data));
+        });
     }, []);
 
     function startTask(taskName) {
@@ -97,8 +85,8 @@ export default function TimeTracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        dbQueue(() => storeConfirmationData(taskName, "Category 1", msToTime(time))) // FIXME add category
-        dbQueue(() => getConfirmationData().then(data => setConfirmationData(data)));
+        storeConfirmationData(db, taskName, "Category 1", msToTime(time)) // FIXME add category
+        getConfirmationData(db).then(data => setConfirmationData(data));
         setTime(0);
     }
 
@@ -144,14 +132,13 @@ export default function TimeTracker() {
             <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
                 {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
                 {taskName: "Archery", icon: require("../../assets/images/splash.png")}]} onPress={(r) => {
-                    console.log(r)
                     if (taskStatus == TaskStatus.notStarted) {
                         startTask(r)
                     }}}>
             </TasksGrid>
             <Stopwatch time={msToTime(time)}></Stopwatch>
             {/*<TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>*/}
-            <TaskStatusButtons taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask}
+            <TaskStatusButtons taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
                                onPressStop={stopTask}/>
             <TimeConfirmationView data={confirmationData} onConfirm={confirmConfirmation}
                                   onDecline={declineConfirmation}/>

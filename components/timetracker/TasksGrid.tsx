@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         padding: 10,
         backgroundColor: '#D3D3D3',
+        // height: 'auto',
     },
     item: {
         width: '20%', // Adjust based on how many items per row you want
