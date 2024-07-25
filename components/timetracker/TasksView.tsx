@@ -1,24 +1,47 @@
-import {ScrollView, StyleSheet} from "react-native";
-import TasksButton from "@/components/timetracker/TasksButton";
+import {View, StyleSheet, Image, Text, ScrollView, Pressable} from "react-native";
 
-export default function TasksView(props) {
+export default function TasksGrid(props) {
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.grid}>
             {props.data.map((item, index) => (
-                <TasksButton key={index} taskName={item.taskName} icon={item.icon}/>
+                <View key={index} style={styles.item}>
+                    <Pressable onPress={props.onPress}>
+                        <View>
+                            <Image source={item.icon} style={styles.icon}/>
+                            <Text style={styles.text}>{item.taskName}</Text>
+                        </View>
+                    </Pressable>
+                </View>
             ))}
         </ScrollView>
-        )
+    );
 }
 
-let styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
+const styles = StyleSheet.create({
+    grid: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'flex-start',
+        padding: 10,
+        backgroundColor: '#D3D3D3',
+    },
+    item: {
+        width: '20%', // Adjust based on how many items per row you want
+        aspectRatio: 1, // Keeps the item as a square
+        padding: 10,
         alignItems: 'center',
-        flexDirection: 'column',
+        justifyContent: 'center',
+        borderWidth: 1,
+        borderColor: 'black',
+    },
+    icon: {
         width: '100%',
-        height: '50%',
-        marginTop: 20,
-        backgroundColor: "#D3D3D3",
-    }
-})
+        height: '70%', // Adjust based on the space needed for text
+        resizeMode: 'contain',
+    },
+    text: {
+        fontSize: 12,
+        textAlign: 'center',
+        marginTop: 5,
+    },
+});

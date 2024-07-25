@@ -56,12 +56,13 @@ export default function TimeTracker() {
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [confirmationData, setConfirmationData] = useState([]);
-    getConfirmationData().then(data => setConfirmationData(data));
+    getConfirmationData().then(data => setConfirmationData(data)); // FIXME this calls every rerender, - update confirmationdata on stop instead
 
-    function startTask() {
+    function startTask(taskName) {
         setTime(0);
         setTotalPausedDuration(0);
         setStartTime(Date.now());
+        setTaskName(taskName)
         setTaskStatus(TaskStatus.running);
         //     start foreground service
     }
@@ -116,7 +117,7 @@ export default function TimeTracker() {
         <View style={styles.container}>
             <TasksView data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
                 {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
-                {taskName: "Archery", icon: require("../../assets/images/splash.png")}]}>
+                {taskName: "Archery", icon: require("../../assets/images/splash.png")}]} onPress={() => {startTask(taskName)}}>
             </TasksView>
             <Stopwatch time={msToTime(time)}></Stopwatch>
             {/*<TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>*/}
