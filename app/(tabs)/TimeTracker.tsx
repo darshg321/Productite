@@ -1,15 +1,31 @@
-import {View, StyleSheet} from "react-native";
+import {StyleSheet, View} from "react-native";
 import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
-import TaskStatusButtons from "@/components/timetracker/TaskStatusButtons";
-import {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
+import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
 import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView";
 import * as SQLite from 'expo-sqlite';
-import TasksView from "@/components/timetracker/TasksView";
+import TasksGrid from "@/components/timetracker/TasksGrid";
 
 const db = SQLite.openDatabaseSync('timetracker.db');
 db.runAsync(
     'CREATE TABLE IF NOT EXISTS confirmationData (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
+
+// Initialize the queue with a resolved promise
+const createDbOperationQueue = () => {
+    let queue = Promise.resolve();
+
+    return (operation) => {
+        queue = queue.then(() => operation().catch(err => console.error(err)));
+        return queue;
+    };
+};
+
+// Create a queue instance for database operations
+const dbQueue = createDbOperationQueue();
+
+// Enqueue operations
+dbQueue(() => clearConfirmationData());
+dbQueue(() => storeConfirmationData('Task', 'Category', 'Time'));
 
 // TODO remove
 async function clearConfirmationData() {
@@ -18,8 +34,14 @@ async function clearConfirmationData() {
 }
 
 async function storeConfirmationData(task, category, time) {
-    db.runAsync(
-        'INSERT INTO confirmationData (task, category, time) VALUES (?, ?, ?);', [task, category, time])
+    try {
+        await db.runAsync(
+            'INSERT INTO confirmationData (task, category, time) VALUES (?, ?, ?);',
+            [task, category, time]
+        );
+    } catch (error) {
+        console.error("Failed to store confirmation data:", error);
+    }
 }
 
 async function getConfirmationData() {
@@ -56,7 +78,12 @@ export default function TimeTracker() {
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [confirmationData, setConfirmationData] = useState([]);
-    getConfirmationData().then(data => setConfirmationData(data)); // FIXME this calls every rerender, - update confirmationdata on stop instead
+
+    useEffect(() => {
+        // getConfirmationData().then(data => setConfirmationData(data));
+        dbQueue(() => getConfirmationData()).then(data => setConfirmationData(data));
+        console.log("init data")
+    }, []);
 
     function startTask(taskName) {
         setTime(0);
@@ -69,10 +96,9 @@ export default function TimeTracker() {
 
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
-        setTaskStatus(TaskStatus.finished);
-
-        storeConfirmationData(taskName, "Category 1", msToTime(time)) // FIXME add category
-
+        setTaskStatus(TaskStatus.notStarted);
+        dbQueue(() => storeConfirmationData(taskName, "Category 1", msToTime(time))) // FIXME add category
+        dbQueue(() => getConfirmationData().then(data => setConfirmationData(data)));
         setTime(0);
     }
 
@@ -115,10 +141,14 @@ export default function TimeTracker() {
 
     return (
         <View style={styles.container}>
-            <TasksView data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
+            <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
                 {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
-                {taskName: "Archery", icon: require("../../assets/images/splash.png")}]} onPress={() => {startTask(taskName)}}>
-            </TasksView>
+                {taskName: "Archery", icon: require("../../assets/images/splash.png")}]} onPress={(r) => {
+                    console.log(r)
+                    if (taskStatus == TaskStatus.notStarted) {
+                        startTask(r)
+                    }}}>
+            </TasksGrid>
             <Stopwatch time={msToTime(time)}></Stopwatch>
             {/*<TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>*/}
             <TaskStatusButtons taskStatus={taskStatus} onPressStart={startTask} onPressPause={pauseTask} onPressPlay={playTask}

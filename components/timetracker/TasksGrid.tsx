@@ -5,7 +5,7 @@ export default function TasksGrid(props) {
         <ScrollView contentContainerStyle={styles.grid}>
             {props.data.map((item, index) => (
                 <View key={index} style={styles.item}>
-                    <Pressable onPress={props.onPress}>
+                    <Pressable onPress={() => props.onPress(item.taskName)}>
                         <View>
                             <Image source={item.icon} style={styles.icon}/>
                             <Text style={styles.text}>{item.taskName}</Text>
