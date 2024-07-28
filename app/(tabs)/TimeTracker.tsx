@@ -2,47 +2,8 @@ import {StyleSheet, View} from "react-native";
 import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
 import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
-import TimeConfirmationView from "@/components/timetracker/TimeConfirmationView";
-import * as SQLite from 'expo-sqlite';
 import TasksGrid from "@/components/timetracker/TasksGrid";
-
-async function initDb() {
-    const db = await SQLite.openDatabaseAsync('timetracker.db');
-    await db.runAsync(
-        'CREATE TABLE IF NOT EXISTS confirmationData (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
-    return db;
-}
-
-// TODO remove
-async function clearConfirmationData(db) {
-    db.runAsync('DROP TABLE IF EXISTS confirmationData;')
-        .then(r => console.log(r));
-}
-
-async function storeConfirmationData(db, task, category, time) {
-    try {
-        await db.runAsync(
-            'INSERT INTO confirmationData (task, category, time) VALUES (?, ?, ?);',
-            [task, category, time]
-        );
-    } catch (error) {
-        console.error("Failed to store confirmation data:", error);
-    }
-}
-
-async function getConfirmationData(db) {
-    return db.getAllAsync('SELECT * FROM confirmationData;');
-}
-
-function declineConfirmation() {
-    // TODO
-    console.log('Declined');
-}
-
-function confirmConfirmation() {
-    // TODO
-    console.log('Confirmed');
-}
+import {storeTask} from "@/components/Database/db";
 
 function msToTime(duration) {
     let seconds = parseInt((duration/1000)%60),
@@ -63,15 +24,6 @@ export default function TimeTracker() {
     const [pauseTime, setPauseTime] = useState(0);
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
-    const [confirmationData, setConfirmationData] = useState([]);
-    const [db, setDb] = useState(null);
-
-    useEffect(() => {
-        initDb().then(db => {
-            setDb(db)
-            getConfirmationData(db).then(data => setConfirmationData(data));
-        });
-    }, []);
 
     function startTask(taskName) {
         setTime(0);
@@ -85,8 +37,7 @@ export default function TimeTracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeConfirmationData(db, taskName, "Category 1", msToTime(time)) // FIXME add category
-        getConfirmationData(db).then(data => setConfirmationData(data));
+        storeTask(taskName, "Category 1", msToTime(time)) // FIXME add category
         setTime(0);
     }
 
@@ -126,7 +77,7 @@ export default function TimeTracker() {
             }
         };
     }, [taskStatus, startTime, totalPausedDuration]);
-
+    // FIXME add mini history here maybe
     return (
         <View style={styles.container}>
             <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
@@ -137,11 +88,8 @@ export default function TimeTracker() {
                     }}}>
             </TasksGrid>
             <Stopwatch time={msToTime(time)}></Stopwatch>
-            {/*<TextInput style={styles.input} placeholder={"Name of Task"} onChangeText={setTaskName}/>*/}
             <TaskStatusButtons taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
                                onPressStop={stopTask}/>
-            <TimeConfirmationView data={confirmationData} onConfirm={confirmConfirmation}
-                                  onDecline={declineConfirmation}/>
         </View>
     );
 }
