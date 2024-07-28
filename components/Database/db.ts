@@ -29,3 +29,8 @@ export async function getPastTasks() {
     const db = await initDb();
     return db.getAllAsync('SELECT * FROM pastTasks;');
 }
+
+export async function runCustom(operation) {
+    const db = await initDb();
+    return db.runAsync(operation);
+}
