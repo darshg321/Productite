@@ -1,5 +1,6 @@
 # Productite
-![Productite V0 1](https://github.com/user-attachments/assets/c5a72958-1db8-465a-b1cf-b9ebe4084706)
+
+https://github.com/user-attachments/assets/570623bb-6c69-40ec-90b0-2ddf2650e477
 
 ## Overview
 Productite is a React Native application designed to help users manage their time efficiently. The app provides a user-friendly interface for adding, viewing, and analyzing tasks through various features such as pie charts and tab navigation.  
