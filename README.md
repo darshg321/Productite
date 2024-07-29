@@ -1,6 +1,8 @@
-# Task Tracker App
+# Productite
+![Productite V0 1](https://github.com/user-attachments/assets/c5a72958-1db8-465a-b1cf-b9ebe4084706)
+
 ## Overview
-The Task Tracker App is a React Native application designed to help users manage and track their tasks efficiently. The app provides a user-friendly interface for adding, viewing, and analyzing tasks through various features such as pie charts and tab navigation.  
+Productite is a React Native application designed to help users manage their time efficiently. The app provides a user-friendly interface for adding, viewing, and analyzing tasks through various features such as pie charts and tab navigation.  
 ## Current Features
 **Time Tracker**: An easy to use time tracker to track different activities.
 **Pie Chart Visualization**: Visual representation of your time using a pie chart.
