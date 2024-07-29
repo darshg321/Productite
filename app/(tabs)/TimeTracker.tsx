@@ -20,7 +20,6 @@ export default function TimeTracker() {
         setStartTime(Date.now());
         setTaskName(taskName)
         setTaskStatus(TaskStatus.running);
-        //     start foreground service
     }
 
     function stopTask() {
@@ -49,7 +48,6 @@ export default function TimeTracker() {
         if (taskStatus === TaskStatus.running) {
             interval = setInterval(() => {
                 const now = Date.now();
-                // Stop task if time is over 99 hours
                 if (time < 359998900) {
                     setTime(now - startTime - totalPausedDuration);
                 } else {
@@ -66,36 +64,33 @@ export default function TimeTracker() {
             }
         };
     }, [taskStatus, startTime, totalPausedDuration]);
-    // FIXME add mini history here maybe
+
     return (
         <View style={styles.container}>
-            {/*make this use a separate table*/}
             <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
                 {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
-                {taskName: "Archery", icon: require("../../assets/images/archery.png")}]} onPress={(r) => {
-                    if (taskStatus == TaskStatus.notStarted) {
-                        startTask(r)
-                    }}}>
+                {taskName: "Archery", icon: require("../../assets/images/archery.png")},
+                {taskName: "Coding", icon: require("../../assets/images/noun-coding-6985103.png")},
+                {taskName: "Basketball", icon: require("../../assets/images/noun-basketball-7063939.png")},]} onPress={(r) => {
+                if (taskStatus == TaskStatus.notStarted) {
+                    startTask(r)
+                }}}>
             </TasksGrid>
-            <Stopwatch time={msToTime(time)}></Stopwatch>
+            <Stopwatch time={msToTime(time)} style={styles.stopwatch}/>
             <TaskStatusButtons taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
-                               onPressStop={stopTask}/>
+                               onPressStop={stopTask} style={styles.taskStatusButtons}/>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-
-    },
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
+        flex: 1,
+        backgroundColor: '#f0f0f0',
+        padding: 20,
     },
     stopwatch: {
-        borderColor: 'black',
+        borderColor: '#000',
         borderWidth: 1,
         borderRadius: 10,
         padding: 10,
@@ -103,7 +98,15 @@ const styles = StyleSheet.create({
         height: 50,
         alignItems: 'center',
         justifyContent: 'center',
-
-    }
-})
-
+        backgroundColor: '#fff',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginVertical: 20,
+    },
+    taskStatusButtons: {
+        marginVertical: 20,
+    },
+});

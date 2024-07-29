@@ -23,26 +23,32 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         justifyContent: 'flex-start',
         padding: 10,
-        backgroundColor: '#D3D3D3',
-        // height: 'auto',
+        backgroundColor: '#f0f0f0',
     },
     item: {
-        width: '20%', // Adjust based on how many items per row you want
-        aspectRatio: 1, // Keeps the item as a square
+        width: '30%',
+        aspectRatio: 1,
         padding: 10,
         alignItems: 'center',
         justifyContent: 'center',
-        borderWidth: 1,
-        borderColor: 'black',
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        margin: 5,
     },
     icon: {
         width: '100%',
-        height: '70%', // Adjust based on the space needed for text
+        height: '70%',
         resizeMode: 'contain',
     },
     text: {
-        fontSize: 12,
+        fontSize: 14,
         textAlign: 'center',
         marginTop: 5,
+        color: '#333',
     },
 });

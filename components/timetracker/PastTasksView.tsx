@@ -1,26 +1,31 @@
-import {FlatList, StyleSheet} from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import PastTaskBox from "@/components/timetracker/PastTaskBox";
-import {msToTime} from "@/src/Utils";
+import { msToTime } from "@/src/Utils";
 
 export default function PastTasksView(props) {
-    function renderItem({item}) {
+    function renderItem({ item }) {
         return (
-            <PastTaskBox task={item.task} category={item.category} time={msToTime(item.time)}/>
-        )
+            <PastTaskBox task={item.task} category={item.category} time={msToTime(item.time)} />
+        );
     }
-    return (
-        <FlatList data={props.data} renderItem={renderItem} contentContainerStyle={styles.container}/>
-    )
-}
-let styles = StyleSheet.create({
-    container: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        marginTop: 20,
-        backgroundColor: "#D3D3D3",
 
-    }
-})
+    return (
+        <View style={styles.wrapper}>
+            <FlatList
+                data={props.data}
+                renderItem={renderItem}
+                contentContainerStyle={styles.container}
+            />
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    wrapper: {
+        flex: 1,
+        backgroundColor: '#f0f0f0',
+    },
+    container: {
+        padding: 20,
+    },
+});

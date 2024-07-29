@@ -1,39 +1,46 @@
-import {Text, View, StyleSheet} from "react-native";
-import { AntDesign } from '@expo/vector-icons';
+import { Text, View, StyleSheet } from "react-native";
 
 export default function PastTaskBox(props) {
     return (
         <View style={styles.container}>
-            <Text style={styles.taskText}>{props.task}</Text>
-            <Text style={styles.category}>{props.category}</Text>
+            <View style={styles.textContainer}>
+                <Text style={styles.taskText}>{props.task}</Text>
+                <Text style={styles.category}>{props.category}</Text>
+            </View>
             <Text style={styles.timeText}>{props.time}</Text>
-            {/*<AntDesign style={styles.button} name="closecircleo" size={18} color="black" onPress={props.onDelete}/>*/}
         </View>
-    )
+    );
 }
 
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        padding: 10,
-        height: 50,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 15,
+        marginVertical: 5,
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+    },
+    textContainer: {
+        flexDirection: 'column',
     },
     taskText: {
-        marginRight: 10,
-        fontSize: 12,
-        color: 'black',
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
     },
     category: {
-        marginRight: 10,
-        fontSize: 12,
-        color: 'black',
+        fontSize: 14,
+        color: '#666',
     },
     timeText: {
-        marginRight: 10,
-        fontSize: 12,
-        color: 'black',
+        fontSize: 14,
+        color: '#333',
     },
-    button: {
-        marginRight: 10,
-    },
-})
+});
