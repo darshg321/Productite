@@ -3,19 +3,8 @@ import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
 import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
 import TasksGrid from "@/components/timetracker/TasksGrid";
-import {storeTask} from "@/components/Database/db";
-
-function msToTime(duration) {
-    let seconds = parseInt((duration/1000)%60),
-        minutes = parseInt((duration/(1000*60))%60),
-        hours = parseInt((duration/(1000*60*60))%24);
-
-    hours = (hours < 10) ? "0" + hours : hours;
-    minutes = (minutes < 10) ? "0" + minutes : minutes;
-    seconds = (seconds < 10) ? "0" + seconds : seconds;
-
-    return hours + ":" + minutes + ":" + seconds;
-}
+import {storeTask} from "@/src/Database/db";
+import {msToTime} from "@/src/Utils";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -37,7 +26,7 @@ export default function TimeTracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeTask(taskName, "Category 1", msToTime(time)) // FIXME add category
+        storeTask(taskName, "Category 1", time) // FIXME add category
         setTime(0);
     }
 
@@ -80,9 +69,10 @@ export default function TimeTracker() {
     // FIXME add mini history here maybe
     return (
         <View style={styles.container}>
+            {/*make this use a separate table*/}
             <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
                 {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
-                {taskName: "Archery", icon: require("../../assets/images/splash.png")}]} onPress={(r) => {
+                {taskName: "Archery", icon: require("../../assets/images/archery.png")}]} onPress={(r) => {
                     if (taskStatus == TaskStatus.notStarted) {
                         startTask(r)
                     }}}>

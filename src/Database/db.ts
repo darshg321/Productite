@@ -30,7 +30,7 @@ export async function getPastTasks() {
     return db.getAllAsync('SELECT * FROM pastTasks;');
 }
 
-export async function runCustom(operation) {
+export async function runCustomGetAll(operation) {
     const db = await initDb();
-    return db.runAsync(operation);
+    return db.getAllAsync(operation);
 }

@@ -1,10 +1,11 @@
 import {FlatList, StyleSheet} from "react-native";
 import PastTaskBox from "@/components/timetracker/PastTaskBox";
+import {msToTime} from "@/src/Utils";
 
 export default function PastTasksView(props) {
     function renderItem({item}) {
         return (
-            <PastTaskBox task={item.task} category={item.category} time={item.time}/>
+            <PastTaskBox task={item.task} category={item.category} time={msToTime(item.time)}/>
         )
     }
     return (
