@@ -1,6 +1,6 @@
 import {View, StyleSheet, Text} from "react-native";
 import {PieChart} from "react-native-gifted-charts";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {runCustomGetAll} from "@/src/Database/db";
 
 function taskDataToChartData(taskData) {
@@ -18,9 +18,7 @@ function taskDataToChartData(taskData) {
 export function TasksPieChart() {
     let [taskData, setTaskData] = useState([]);
 
-    // useEffect(() => {
-    //     runCustomGetAll('SELECT task, SUM(time) as time FROM pastTasks GROUP BY task;').then(r => setTaskData(r))
-    // }, []);
+    // FIXME bad performance
     runCustomGetAll('SELECT task, SUM(time) as time FROM pastTasks GROUP BY task;').then(r => setTaskData(r))
 
     return (
