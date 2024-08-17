@@ -5,6 +5,8 @@ import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatus
 import TasksGrid from "@/components/timetracker/TasksGrid";
 import {storeTask} from "@/src/Database/db";
 import {msToTime} from "@/src/Utils";
+import Ionicons from '@expo/vector-icons/Ionicons';
+import {router} from "expo-router";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -67,15 +69,16 @@ export default function TimeTracker() {
 
     return (
         <View style={styles.container}>
-            <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/react-logo.png")},
-                {taskName: "Cubing", icon: require("../../assets/images/favicon.png")},
-                {taskName: "Archery", icon: require("../../assets/images/archery.png")},
-                {taskName: "Coding", icon: require("../../assets/images/noun-coding-6985103.png")},
-                {taskName: "Basketball", icon: require("../../assets/images/noun-basketball-7063939.png")},]} onPress={(r) => {
+            <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/taskimages/science.png")},
+                {taskName: "Cubing", icon: require("../../assets/images/taskimages/cubing.png")},
+                {taskName: "Archery", icon: require("../../assets/images/taskimages/archery.png")},
+                {taskName: "Coding", icon: require("../../assets/images/taskimages/coding.png")},
+                {taskName: "Basketball", icon: require("../../assets/images/taskimages/basketball.png")},]} onPress={(r) => {
                 if (taskStatus == TaskStatus.notStarted) {
                     startTask(r)
                 }}}>
             </TasksGrid>
+            <Ionicons style={styles.options} name="options" size={40} color="black" onPress={() => {router.push("/EditTasks")}} />
             <Stopwatch time={msToTime(time)} style={styles.stopwatch}/>
             <TaskStatusButtons taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
                                onPressStop={stopTask} style={styles.taskStatusButtons}/>
@@ -88,6 +91,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f0f0f0',
         padding: 20,
+    },
+    options: {
+        padding: 10,
     },
     stopwatch: {
         borderColor: '#000',
