@@ -7,7 +7,7 @@ import {storeTask} from "@/src/Database/db";
 import {msToTime} from "@/src/Utils";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {router} from "expo-router";
-import {runCustomGetAll} from "@/src/Database/db";
+import {runCustomGetAll, deleteDb} from "@/src/Database/db";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -18,7 +18,8 @@ export default function TimeTracker() {
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [tasks, setTasks] = useState([]);
 
-    runCustomGetAll('SELECT * FROM tasks;').then(r => {setTasks(r)})
+    // runCustomGetAll('SELECT * FROM tasks;').then(r => {setTasks(r); console.log(r)})
+    deleteDb().then(r => console.log(r))
 
     function startTask(taskName) {
         setTime(0);

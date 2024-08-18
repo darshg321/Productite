@@ -8,7 +8,8 @@ export default function TasksGrid(props) {
                     <Pressable onPress={() => props.onPress(item.taskName)}>
                         <View>
                             <Image source={item.icon} style={styles.icon}/>
-                            <Text style={styles.text}>{item.taskName}</Text>
+                            <Text style={styles.text}>{item.taskName[0].toUpperCase()+item.taskName.slice(1, -1)}</Text>
+                            <Text style={styles.category}>{item.category}</Text>
                         </View>
                     </Pressable>
                 </View>
@@ -47,6 +48,12 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 14,
+        textAlign: 'center',
+        marginTop: 5,
+        color: '#333',
+    },
+    category: {
+        fontSize: 8,
         textAlign: 'center',
         marginTop: 5,
         color: '#333',
