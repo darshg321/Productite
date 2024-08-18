@@ -1,9 +1,9 @@
 import * as SQLite from "expo-sqlite";
 
 async function initDb() {
-    const db = await SQLite.openDatabaseAsync('Productite.db');
-    await db.runAsync(
-        'CREATE TABLE IF NOT EXISTS pastTasks (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
+    const db = await SQLite.openDatabaseAsync('@assets/Productite.db');
+    // await db.runAsync(
+    //     'CREATE TABLE IF NOT EXISTS pastTasks (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
     return db;
 }
 

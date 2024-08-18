@@ -7,6 +7,7 @@ import {storeTask} from "@/src/Database/db";
 import {msToTime} from "@/src/Utils";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {router} from "expo-router";
+import {runCustomGetAll} from "@/src/Database/db";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -15,6 +16,9 @@ export default function TimeTracker() {
     const [pauseTime, setPauseTime] = useState(0);
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
+    const [tasks, setTasks] = useState([]);
+
+    runCustomGetAll('SELECT * FROM tasks;').then(r => {setTasks(r)})
 
     function startTask(taskName) {
         setTime(0);
@@ -27,7 +31,7 @@ export default function TimeTracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeTask(taskName, "Category 1", time) // FIXME add category
+        storeTask(taskName, null, time) // FIXME add category
         setTime(0);
     }
 
@@ -69,11 +73,16 @@ export default function TimeTracker() {
 
     return (
         <View style={styles.container}>
-            <TasksGrid data={[{taskName: "Science", icon: require("../../assets/images/taskimages/science.png")},
-                {taskName: "Cubing", icon: require("../../assets/images/taskimages/cubing.png")},
-                {taskName: "Archery", icon: require("../../assets/images/taskimages/archery.png")},
-                {taskName: "Coding", icon: require("../../assets/images/taskimages/coding.png")},
-                {taskName: "Basketball", icon: require("../../assets/images/taskimages/basketball.png")},]} onPress={(r) => {
+            {/*<TasksGrid data={[{taskName: "Science", icon: require("@/assets/images/taskicons/science.png")},*/}
+            {/*    {taskName: "Cubing", icon: require("@/assets/images/taskicons/cubing.png")},*/}
+            {/*    {taskName: "Archery", icon: require("@/assets/images/taskicons/archery.png")},*/}
+            {/*    {taskName: "Coding", icon: require("@/assets/images/taskicons/coding.png")},*/}
+            {/*    {taskName: "Basketball", icon: require("@/assets/images/taskicons/basketball.png")},]} onPress={(r) => {*/}
+            {/*    if (taskStatus == TaskStatus.notStarted) {*/}
+            {/*        startTask(r)*/}
+            {/*    }}}>*/}
+            {/*</TasksGrid>*/}
+            <TasksGrid data={tasks} onPress={(r) => {
                 if (taskStatus == TaskStatus.notStarted) {
                     startTask(r)
                 }}}>
