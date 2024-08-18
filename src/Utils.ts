@@ -1,3 +1,5 @@
+import {runCustomGetAll} from "@/src/Database/db";
+
 
 export function msToTime(duration) {
     let seconds = parseInt((duration/1000)%60),
@@ -9,4 +11,15 @@ export function msToTime(duration) {
     seconds = (seconds < 10) ? "0" + seconds : seconds;
 
     return hours + ":" + minutes + ":" + seconds;
+}
+
+export function loadIcons() {
+    let taskIcons = {};
+    runCustomGetAll('SELECT * FROM tasks;').then(r => {
+        // r.map((item, index) => {taskIcons.push({item.task: require(`@/assets/taskicons/${item.icon}`)}})
+        for (let i = 0; i < r.length; i++) {
+            taskIcons[r[i].task] = `require(@/assets/taskicons/${r[i].icon}`;
+        }
+    })
+    return taskIcons;
 }

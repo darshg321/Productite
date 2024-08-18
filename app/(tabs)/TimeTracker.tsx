@@ -18,8 +18,8 @@ export default function TimeTracker() {
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [tasks, setTasks] = useState([]);
 
-    // runCustomGetAll('SELECT * FROM tasks;').then(r => {setTasks(r); console.log(r)})
-    deleteDb().then(r => console.log(r))
+    runCustomGetAll('SELECT * FROM tasks;').then(r => {setTasks(r); console.log(r)})
+    // deleteDb().then(r => console.log(r))
 
     function startTask(taskName) {
         setTime(0);

@@ -1,14 +1,20 @@
 import {View, StyleSheet, Image, Text, ScrollView, Pressable} from "react-native";
+import {loadIcons} from "@/src/Utils";
+const icons = loadIcons();
+for (let i = 0; i < icons.length; i++) {
+    // eval(icons[i]);
+}
+console.log(icons)
 
 export default function TasksGrid(props) {
     return (
         <ScrollView contentContainerStyle={styles.grid}>
             {props.data.map((item, index) => (
                 <View key={index} style={styles.item}>
-                    <Pressable onPress={() => props.onPress(item.taskName)}>
+                    <Pressable onPress={() => props.onPress(item.task)}>
                         <View>
-                            <Image source={item.icon} style={styles.icon}/>
-                            <Text style={styles.text}>{item.taskName[0].toUpperCase()+item.taskName.slice(1, -1)}</Text>
+                            <Image source={eval(icons[item.task])} style={styles.icon}/>`
+                            <Text style={styles.text}>{item.task}</Text>
                             <Text style={styles.category}>{item.category}</Text>
                         </View>
                     </Pressable>
