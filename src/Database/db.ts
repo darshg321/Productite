@@ -48,6 +48,11 @@ export async function getTaskList() {
     return db.getAllAsync('SELECT * FROM tasks;');
 }
 
+export async function getCategories() {
+    const db = await initDb();
+    return db.getAllAsync('SELECT * FROM categories;');
+}
+
 export async function runCustomGetAll(operation) {
     const db = await initDb();
     return db.getAllAsync(operation);

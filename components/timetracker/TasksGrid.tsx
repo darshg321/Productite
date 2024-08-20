@@ -2,9 +2,6 @@ import {View, StyleSheet, Image, Text, ScrollView, Pressable} from "react-native
 import {icons} from "@/src/Utils";
 
 export default function TasksGrid(props) {
-    // props.data.map((item, index) => {
-    //     console.log(item.icon + `+  ${icons[item.icon]}`)
-    // })
     return (
         <ScrollView contentContainerStyle={styles.grid}>
             {props.data.map((item, index) => (

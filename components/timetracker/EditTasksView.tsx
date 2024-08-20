@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet, View } from "react-native";
 import EditTaskBox from "@/components/timetracker/EditTasksBox";
 
-export default function PastTasksView(props) {
+export default function EditTasksView(props) {
     function renderItem({ item }) {
         return (
             <EditTaskBox task={item.task} category={item.category} icon={item.icon} />
@@ -21,7 +21,7 @@ export default function PastTasksView(props) {
 
 const styles = StyleSheet.create({
     wrapper: {
-        flex: 1,
+        // flex: 1,
         backgroundColor: '#f0f0f0',
     },
     container: {
