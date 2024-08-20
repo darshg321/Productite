@@ -17,6 +17,7 @@ export const icons = {
     coding: require('@/assets/images/taskicons/coding.png'),
     cooking: require('@/assets/images/taskicons/cooking.png'),
     cubing: require('@/assets/images/taskicons/cubing.png'),
+    default: require('@/assets/images/taskicons/default.png'),
     eating: require('@/assets/images/taskicons/eating.png'),
     science: require('@/assets/images/taskicons/science.png'),
     showering: require('@/assets/images/taskicons/showering.png'),

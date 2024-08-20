@@ -31,7 +31,7 @@ export default function TimeTracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeTask(taskName, null, time) // FIXME add category
+        storeTask(taskName, null, time) // FIXME add category, timestamp
         setTime(0);
     }
 
