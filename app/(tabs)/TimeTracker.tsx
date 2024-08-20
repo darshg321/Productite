@@ -3,11 +3,10 @@ import {Stopwatch} from "@/components/timetracker/Stopwatch";
 import {useEffect, useState} from "react";
 import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
 import TasksGrid from "@/components/timetracker/TasksGrid";
-import {storeTask} from "@/src/Database/db";
+import {getTaskList, storeTask} from "@/src/Database/db";
 import {msToTime} from "@/src/Utils";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {router} from "expo-router";
-import {runCustomGetAll} from "@/src/Database/db";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -16,9 +15,9 @@ export default function TimeTracker() {
     const [pauseTime, setPauseTime] = useState(0);
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
-    const [tasks, setTasks] = useState([]);
+    const [taskList, setTaskList] = useState([]);
 
-    runCustomGetAll('SELECT * FROM tasks;').then(r => setTasks(r))
+    getTaskList().then(r => setTaskList(r))
 
     function startTask(taskName) {
         setTime(0);
@@ -73,16 +72,7 @@ export default function TimeTracker() {
 
     return (
         <View style={styles.container}>
-            {/*<TasksGrid data={[{taskName: "Science", icon: require("@/assets/images/taskicons/science.png")},*/}
-            {/*    {taskName: "Cubing", icon: require("@/assets/images/taskicons/cubing.png")},*/}
-            {/*    {taskName: "Archery", icon: require("@/assets/images/taskicons/archery.png")},*/}
-            {/*    {taskName: "Coding", icon: require("@/assets/images/taskicons/coding.png")},*/}
-            {/*    {taskName: "Basketball", icon: require("@/assets/images/taskicons/basketball.png")},]} onPress={(r) => {*/}
-            {/*    if (taskStatus == TaskStatus.notStarted) {*/}
-            {/*        startTask(r)*/}
-            {/*    }}}>*/}
-            {/*</TasksGrid>*/}
-            <TasksGrid data={tasks} onPress={(r) => {
+            <TasksGrid data={taskList} onPress={(r) => {
                 if (taskStatus == TaskStatus.notStarted) {
                     startTask(r)
                 }}}>

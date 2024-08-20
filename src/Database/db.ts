@@ -21,9 +21,11 @@ export async function clearPastTasks() {
 }
 
 export async function deleteDb() {
-    const db = await initDb();
-    db.runAsync('DELETE FROM tasks;')
-        .then(r => console.log(r));
+    const internalDbName = "Productite.sqlite";
+    const sqlDir = FileSystem.documentDirectory + "SQLite/";
+    if ((await FileSystem.getInfoAsync(sqlDir + internalDbName)).exists) {
+        await FileSystem.deleteAsync(sqlDir + internalDbName);
+    }
 }
 
 export async function storeTask(task, category, time) {
@@ -38,6 +40,18 @@ export async function storeTask(task, category, time) {
     }
 }
 
+export async function storeNewTaskItem(task, category, icon) {
+    const db = await initDb();
+    try {
+        await db.runAsync(
+            'INSERT INTO taskList (task, category, icon) VALUES (?, ?, ?);', // change to taskList
+            [task, category, icon]
+        );
+    } catch (error) {
+        console.error("Failed to store task:", error);
+    }
+}
+
 export async function getPastTasks() {
     const db = await initDb();
     return db.getAllAsync('SELECT * FROM pastTasks;');
@@ -45,7 +59,7 @@ export async function getPastTasks() {
 
 export async function getTaskList() {
     const db = await initDb();
-    return db.getAllAsync('SELECT * FROM tasks;');
+    return db.getAllAsync('SELECT * FROM taskList;');
 }
 
 export async function getCategories() {

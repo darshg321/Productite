@@ -4,8 +4,8 @@ import {icons} from "@/src/Utils";
 export default function IconsView(props) {
     function renderItem({ item }) {
         return (
-            <View style={styles.iconContainer}>
-                <Pressable onPress={() => props.onPress(item)}>
+            <View>
+                <Pressable style={styles.iconContainer} onPress={() => props.onPressIcon(icons[item])}>
                     <Image style={styles.icon} source={item}/>
                 </Pressable>
             </View>
@@ -25,7 +25,6 @@ export default function IconsView(props) {
 
 const styles = StyleSheet.create({
     wrapper: {
-        // flex: 1,
         backgroundColor: '#f0f0f0',
     },
     container: {
