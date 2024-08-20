@@ -1,5 +1,3 @@
-import {runCustomGetAll} from "@/src/Database/db";
-
 
 export function msToTime(duration) {
     let seconds = parseInt((duration/1000)%60),
@@ -13,13 +11,14 @@ export function msToTime(duration) {
     return hours + ":" + minutes + ":" + seconds;
 }
 
-export function loadIcons() {
-    let taskIcons = {};
-    runCustomGetAll('SELECT * FROM tasks;').then(r => {
-        // r.map((item, index) => {taskIcons.push({item.task: require(`@/assets/taskicons/${item.icon}`)}})
-        for (let i = 0; i < r.length; i++) {
-            taskIcons[r[i].task] = `require(@/assets/taskicons/${r[i].icon}`;
-        }
-    })
-    return taskIcons;
+export const icons = {
+    archery: require('@/assets/images/taskicons/archery.png'),
+    basketball: require('@/assets/images/taskicons/basketball.png'),
+    coding: require('@/assets/images/taskicons/coding.png'),
+    cooking: require('@/assets/images/taskicons/cooking.png'),
+    cubing: require('@/assets/images/taskicons/cubing.png'),
+    eating: require('@/assets/images/taskicons/eating.png'),
+    science: require('@/assets/images/taskicons/science.png'),
+    showering: require('@/assets/images/taskicons/showering.png'),
+    sleeping: require('@/assets/images/taskicons/sleeping.png'),
 }

@@ -10,17 +10,9 @@ async function initDb() {
         const asset = Asset.fromModule(require("@/assets/Productite.db"));
         await FileSystem.downloadAsync(asset.uri, sqlDir + internalDbName);
     }
-
     const db= await SQLite.openDatabaseAsync(internalDbName);
     return db;
 }
-
-// async function initDb() {
-//     const db = await SQLite.openDatabaseAsync('@/assets/Productite.db');
-//     // await db.runAsync(
-//     //     'CREATE TABLE IF NOT EXISTS pastTasks (id INTEGER PRIMARY KEY NOT NULL, task TEXT, category TEXT, time TEXT);')
-//     return db;
-// }
 
 export async function clearPastTasks() {
     const db = await initDb();
@@ -49,6 +41,11 @@ export async function storeTask(task, category, time) {
 export async function getPastTasks() {
     const db = await initDb();
     return db.getAllAsync('SELECT * FROM pastTasks;');
+}
+
+export async function getTaskList() {
+    const db = await initDb();
+    return db.getAllAsync('SELECT * FROM tasks;');
 }
 
 export async function runCustomGetAll(operation) {
