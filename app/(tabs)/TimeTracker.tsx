@@ -78,8 +78,8 @@ export default function TimeTracker() {
             </TasksGrid>
             <Ionicons style={styles.options} name="options" size={40} color="black" onPress={() => router.push("/TaskList")} />
             <Stopwatch time={msToTime(time)} style={styles.stopwatch}/>
-            <TaskStatusButtons taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
-                               onPressStop={stopTask} style={styles.taskStatusButtons}/>
+            <TaskStatusButtons style={styles.taskStatusButtons} taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
+                               onPressStop={stopTask}/>
         </View>
     );
 }

@@ -5,25 +5,28 @@ import TaskListView from "@/components/timetracker/TaskListView";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import {router} from "expo-router";
 import {MenuProvider} from "react-native-popup-menu";
+import {TaskItem} from "@/src/types";
 
 export default function TaskList() {
-    const [taskList, setTaskList] = useState();
+    const [taskList, setTaskList] = useState<TaskItem[]>();
 
-    getTaskList().then(data => setTaskList(data));
+    getTaskList().then(r => setTaskList(r as TaskItem[]));
 
-    function deleteTask(task) {
-        deleteTaskFromTaskList(task);
+    function deleteTask(taskName: string) {
+        deleteTaskFromTaskList(taskName);
     }
 
-    function editTask(task) {
-        router.setParams({taskName: task});
+    function editTask(taskName: string) {
+        router.setParams({taskName: taskName});
         router.push('/EditTask');
     }
 
     return (
-        <View>
-            <MenuProvider style={styles.container}>
-                <TaskListView data={taskList} onPressEdit={editTask} onPressDelete={deleteTask}/>
+        <View style={styles.container}>
+            <MenuProvider>
+                <View>
+                    <TaskListView data={taskList} onPressEdit={editTask} onPressDelete={deleteTask}/>
+                </View>
             </MenuProvider>
             <AntDesign name="pluscircleo" size={24} color="black" onPress={() => {router.push('/EditTask');}}/>
         </View>

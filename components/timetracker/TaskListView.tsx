@@ -4,9 +4,12 @@ import Entypo from "@expo/vector-icons/Entypo";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import {Menu, MenuOption, MenuOptions, MenuTrigger} from "react-native-popup-menu";
+import {TaskItem} from "@/src/types";
 
-export default function TaskListView(props) {
-    function renderItem({ item }) {
+export default function TaskListView(props: { data: TaskItem[],
+    onPressEdit: (taskName: string) => void, onPressDelete: (taskName: string) => void}) {
+
+    function renderItem({ item }: { item: TaskItem }) {
         return (
             <View>
                 <EditTaskBox task={item.task} category={item.category} icon={item.icon} />

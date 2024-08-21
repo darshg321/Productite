@@ -2,29 +2,31 @@ import {View, StyleSheet, Text} from "react-native";
 import {PieChart} from "react-native-gifted-charts";
 import {useState} from "react";
 import {getTaskTimeSum} from "@/src/Database/db";
+import {PastTaskData} from "@/src/types";
 
-function taskDataToChartData(taskData) {
+function pastTaskDataToChartData(pastTaskData: PastTaskData[]) {
     const colors = [
         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
     ];
-    return taskData.map((task, index) => {
+    return pastTaskData.map((task, index) => {
         return {
             text: task.task,
-            value: task.time,
+            value: task.timeSpent,
             color: colors[index % colors.length]
         }
     });
 }
 export function TasksPieChart() {
-    let [taskData, setTaskData] = useState([]);
+    const [pastTaskData, setPastTaskData]
+        = useState<PastTaskData[]>([]);
 
     // FIXME bad performance
-    getTaskTimeSum().then(r => setTaskData(r))
+    getTaskTimeSum().then(r => setPastTaskData(r as PastTaskData[]))
 
     return (
         <View style={styles.container}>
             <PieChart
-                data={taskDataToChartData(taskData)}
+                data={pastTaskDataToChartData(pastTaskData)}
                 radius={150}
                 textSize={15}
                 textColor={'#000'}
@@ -33,7 +35,7 @@ export function TasksPieChart() {
                 strokeWidth={2}
             />
             <View style={styles.legend}>
-                {taskDataToChartData(taskData).map((item, index) => (
+                {pastTaskDataToChartData(pastTaskData).map((item, index) => (
                     <View key={index} style={styles.legendItem}>
                         <View style={[styles.colorBox, {backgroundColor: item.color}]} />
                         <Text style={styles.legendText}>{item.text}</Text>

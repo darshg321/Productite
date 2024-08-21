@@ -6,41 +6,41 @@ import {router, useLocalSearchParams} from "expo-router";
 import {AntDesign} from "@expo/vector-icons";
 import IconsView from "@/components/timetracker/IconsView";
 import {icons} from "@/src/Utils";
+import {TaskItem} from "@/src/types";
 
 
 export default function EditTask() {
-    const [taskData, setTaskData] = useState();
+    const [taskData, setTaskData] = useState<TaskItem[]>();
     const params = useLocalSearchParams();
 
-    const [taskName, setTaskName] = useState();
-    const [category, setCategory] = useState();
-    const [icon, setIcon] = useState(icons[defaultIcon]);
-    const [categories, setCategories] = useState([]);
+    const [taskName, setTaskName] = useState("");
+    const [category, setCategory] = useState<string | null>(null);
+    const [icon, setIcon] = useState(icons["defaultIcon"]);
+    const [categories, setCategories]
+            = useState<{ id: number, category: string }[]>([]);
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
 
     if (params?.taskName) {
-        getTaskInfo(params.taskName).then(data => {
-            setTaskData(data);
-            setTaskName(data.task || "");
-            setCategory(data.category || null);
-            setIcon(icons[data.icon || "default"]);
+        getTaskInfo(params.taskName as string).then((r: TaskItem) => {
+            setTaskData([r]);
+            setTaskName(r.taskName);
+            setCategory(r.category);
+            setIcon(icons[r.icon as keyof typeof icons]);
         });
     }
+    getCategories().then((r) => setCategories(r));
 
-    getCategories().then(data => setCategories(data));
-
-    console.log(icons["default"]);
+    console.log(icons["defaultIcon"]);
 
     function storeTaskItem() {
         storeNewTaskItem(taskName, category, icon).then(() => router.push('/TaskList'));
     }
 
-    function onPressIcon(icon) {
+    function onPressIcon(icon: string) {
         console.log(icon);
         setIcon(icon);
         setIconsViewVisible(false);
     }
-
 
     return (
         <View>

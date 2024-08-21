@@ -1,13 +1,15 @@
-import { Text, View, StyleSheet } from "react-native";
+import {Text, View, StyleSheet} from "react-native";
+import {PastTaskData} from "@/src/types";
+import {msToTime} from "@/src/Utils";
 
-export default function PastTaskBox(props) {
+export default function PastTaskBox(props: PastTaskData) {
     return (
         <View style={styles.container}>
             <View style={styles.textContainer}>
-                <Text style={styles.taskText}>{props.task}</Text>
+                <Text style={styles.taskText}>{props.taskName}</Text>
                 <Text style={styles.timestamp}>{props.timestamp}</Text>
             </View>
-            <Text style={styles.timeText}>{props.time}</Text>
+            <Text style={styles.timeText}>{msToTime(props.timeSpent)}</Text>
         </View>
     );
 }
@@ -22,7 +24,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
