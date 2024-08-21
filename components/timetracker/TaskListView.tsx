@@ -15,11 +15,11 @@ export default function TaskListView(props) {
                         <Entypo name="dots-three-vertical" size={24} color="black"/>
                     </MenuTrigger>
                     <MenuOptions>
-                        <MenuOption onSelect={props.onPressEdit(item.task)}>
+                        <MenuOption onSelect={() => props.onPressEdit(item.task)}>
                             <Feather name="edit" size={24} color="black" />
                             <Text>Edit</Text>
                         </MenuOption>
-                        <MenuOption onSelect={props.onPressDelete(item.task)}>
+                        <MenuOption onSelect={() => props.onPressDelete(item.task)}>
                             <AntDesign name="delete" size={24} color="black" />
                             <Text>Delete</Text>
                         </MenuOption>

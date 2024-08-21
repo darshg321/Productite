@@ -13,9 +13,9 @@ export default function TaskListBox(props) {
 
 const styles = StyleSheet.create({
     container: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        // flexDirection: 'row',
+        // alignItems: 'center',
+        // justifyContent: 'space-between',
         padding: 10,
         backgroundColor: '#f0f0f0',
         margin: 5,
@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
     icon: {
         width: 30,
         height: 30,
-        resizeMode: 'contain',
+        // resizeMode: 'contain',
     }
 })

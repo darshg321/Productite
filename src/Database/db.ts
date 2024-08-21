@@ -62,6 +62,11 @@ export async function getPastTasks() {
     return db.getAllAsync('SELECT * FROM pastTasks;');
 }
 
+export async function getTaskInfo(taskName) {
+    const db = await initDb();
+    return db.getAllAsync(`SELECT * FROM taskList WHERE task = ${taskName};`);
+}
+
 export async function getTaskList() {
     const db = await initDb();
     return db.getAllAsync('SELECT * FROM taskList;');

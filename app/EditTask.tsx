@@ -1,7 +1,7 @@
 import {Modal, TextInput, View} from "react-native";
 import {useState} from "react";
 import {Picker} from "@react-native-picker/picker";
-import {getCategories, storeNewTaskItem, storeTask} from "@/src/Database/db";
+import {getCategories, getTaskInfo, storeNewTaskItem, storeTask} from "@/src/Database/db";
 import {router, useLocalSearchParams} from "expo-router";
 import {AntDesign} from "@expo/vector-icons";
 import IconsView from "@/components/timetracker/IconsView";
@@ -9,18 +9,30 @@ import {icons} from "@/src/Utils";
 
 
 export default function EditTask() {
-    const editTask = useLocalSearchParams();
+    const [taskData, setTaskData] = useState();
+    const params = useLocalSearchParams();
 
-    const [taskName, setTaskName] = useState(editTask.task || "");
-    const [category, setCategory] = useState(editTask.category || null);
+    const [taskName, setTaskName] = useState();
+    const [category, setCategory] = useState();
+    const [icon, setIcon] = useState(icons["default"]);
     const [categories, setCategories] = useState([]);
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
-    const [icon, setIcon] = useState(icons[editTask.icon || "default"]);
+
+    if (params?.taskName) {
+        getTaskInfo(params.taskName).then(data => {
+            setTaskData(data);
+            setTaskName(data.task || "");
+            setCategory(data.category || null);
+            setIcon(icons[data.icon || "default"]);
+        });
+    }
+
+    getCategories().then(data => setCategories(data));
 
     console.log(icons["default"]);
 
     function storeTaskItem() {
-        storeNewTaskItem(taskName, category, icon).then(() => router.push('/EditTasks'));
+        storeNewTaskItem(taskName, category, icon).then(() => router.push('/TaskList'));
     }
 
     function onPressIcon(icon) {
@@ -29,7 +41,6 @@ export default function EditTask() {
         setIconsViewVisible(false);
     }
 
-    getCategories().then(data => setCategories(data));
 
     return (
         <View>
@@ -48,7 +59,7 @@ export default function EditTask() {
             </Picker>
             <AntDesign name="clockcircleo" size={24} color="black" onPress={() => setIconsViewVisible(true)}/>
             <AntDesign name="checkcircleo" size={24} color="black" onPress={() => storeTaskItem()}/>
-            <AntDesign name={"closecircleo"} size={24} color="black" onPress={() => router.push('/EditTasks')}/>
+            <AntDesign name={"closecircleo"} size={24} color="black" onPress={() => router.push('/EditTask')}/>
             <Modal visible={iconsViewVisible}
                    animationType="none"
                    transparent={true}
