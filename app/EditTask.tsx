@@ -29,8 +29,6 @@ export default function EditTask() {
     }
     getCategories().then((r) => setCategories(r as { id: number, category: string }[]));
 
-    console.log(icons["defaultIcon"]);
-
     function storeTaskItem() {
         storeNewTaskItem({taskName, category, icon}).then(() => router.push('/TaskList'));
     }
@@ -62,8 +60,7 @@ export default function EditTask() {
             <Modal visible={iconsViewVisible}
                    animationType="none"
                    transparent={true}
-                   onRequestClose={() => setIconsViewVisible(false)}
-            >
+                   onRequestClose={() => setIconsViewVisible(false)}>
                 <View>
                     <IconsView onPressIcon={onPressIcon}/>
                     <AntDesign name="closecircleo" size={24} color="black" onPress={() => setIconsViewVisible(false)}/>

@@ -1,11 +1,11 @@
-import {FlatList, View, Image, StyleSheet, Pressable} from "react-native";
+import {FlatList, View, Image, StyleSheet, Pressable, ImageSourcePropType} from "react-native";
 import {icons} from "@/src/Utils";
 
 export default function IconsView(props: { onPressIcon: (icon: string) => void }) {
-    function renderItem({ item }: { item: string }) {
+    function renderItem({ item }: { item: ImageSourcePropType }) {
         return (
             <View>
-                <Pressable style={styles.iconContainer} onPress={() => props.onPressIcon(icons[item])}>
+                <Pressable style={styles.iconContainer} onPress={() => props.onPressIcon(item)}> {/*FIXME this isnt the file*/}
                     <Image style={styles.icon} source={item}/>
                 </Pressable>
             </View>
@@ -15,7 +15,7 @@ export default function IconsView(props: { onPressIcon: (icon: string) => void }
     return (
         <View style={styles.wrapper}>
             <FlatList
-                data={Object.keys(icons).map(key => icons[key])}
+                data={Object.keys(icons).map(key => icons[key as keyof typeof icons])}
                 renderItem={renderItem}
                 contentContainerStyle={styles.container}
             />

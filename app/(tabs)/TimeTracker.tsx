@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     },
     options: {
         padding: 10,
+        marginVertical: 10,
     },
     stopwatch: {
         borderColor: '#000',

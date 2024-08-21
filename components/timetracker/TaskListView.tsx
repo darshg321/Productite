@@ -11,20 +11,20 @@ export default function TaskListView(props: { data: TaskItem[],
 
     function renderItem({ item }: { item: TaskItem }) {
         return (
-            <View>
+            <View style={styles.itemContainer}>
                 <EditTaskBox taskName={item.taskName} category={item.category} icon={item.icon} />
                 <Menu>
                     <MenuTrigger>
                         <Entypo name="dots-three-vertical" size={24} color="black"/>
                     </MenuTrigger>
                     <MenuOptions>
-                        <MenuOption onSelect={() => props.onPressEdit(item.taskName)}>
-                            <Feather name="edit" size={24} color="black" />
-                            <Text>Edit</Text>
+                        <MenuOption onSelect={() => props.onPressEdit(item.taskName)} style={styles.menuOption}>
+                            <Feather name="edit" size={24} color="white" />
+                            <Text style={styles.menuText}>Edit</Text>
                         </MenuOption>
-                        <MenuOption onSelect={() => props.onPressDelete(item.taskName)}>
-                            <AntDesign name="delete" size={24} color="black" />
-                            <Text>Delete</Text>
+                        <MenuOption onSelect={() => props.onPressDelete(item.taskName)} style={styles.menuOption}>
+                            <AntDesign name="delete" size={24} color="white" />
+                            <Text style={styles.menuText}>Delete</Text>
                         </MenuOption>
                     </MenuOptions>
                 </Menu>
@@ -45,10 +45,34 @@ export default function TaskListView(props: { data: TaskItem[],
 
 const styles = StyleSheet.create({
     wrapper: {
-        // flex: 1,
+        flex: 1,
         backgroundColor: '#f0f0f0',
+        padding: 20,
     },
     container: {
         padding: 20,
+    },
+    itemContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
+        backgroundColor: '#fff',
+        margin: 5,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+    },
+    menuOption: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+    },
+    menuText: {
+        color: '#000',
+        marginLeft: 10,
     },
 });
