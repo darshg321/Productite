@@ -10,7 +10,7 @@ function pastTaskDataToChartData(pastTaskData: PastTaskData[]) {
     ];
     return pastTaskData.map((task, index) => {
         return {
-            text: task.task,
+            text: task.taskName,
             value: task.timeSpent,
             color: colors[index % colors.length]
         }

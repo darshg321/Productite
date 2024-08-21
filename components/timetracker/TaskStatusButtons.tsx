@@ -1,5 +1,5 @@
 import {AntDesign, Feather} from "@expo/vector-icons";
-import {View, StyleSheet} from "react-native";
+import {View, StyleSheet, ViewStyle} from "react-native";
 
 export enum TaskStatus {
     notStarted,
@@ -12,6 +12,7 @@ interface TaskStatusButtonsProps {
     onPressPlay: (() => void),
     onPressStop: (() => void),
     onPressPause: (() => void),
+    style?: ViewStyle,
 }
 
 export default function TaskStatusButtons(props: TaskStatusButtonsProps) {

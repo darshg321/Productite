@@ -12,17 +12,17 @@ export default function TaskListView(props: { data: TaskItem[],
     function renderItem({ item }: { item: TaskItem }) {
         return (
             <View>
-                <EditTaskBox task={item.task} category={item.category} icon={item.icon} />
+                <EditTaskBox taskName={item.taskName} category={item.category} icon={item.icon} />
                 <Menu>
                     <MenuTrigger>
                         <Entypo name="dots-three-vertical" size={24} color="black"/>
                     </MenuTrigger>
                     <MenuOptions>
-                        <MenuOption onSelect={() => props.onPressEdit(item.task)}>
+                        <MenuOption onSelect={() => props.onPressEdit(item.taskName)}>
                             <Feather name="edit" size={24} color="black" />
                             <Text>Edit</Text>
                         </MenuOption>
-                        <MenuOption onSelect={() => props.onPressDelete(item.task)}>
+                        <MenuOption onSelect={() => props.onPressDelete(item.taskName)}>
                             <AntDesign name="delete" size={24} color="black" />
                             <Text>Delete</Text>
                         </MenuOption>

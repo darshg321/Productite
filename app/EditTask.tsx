@@ -1,7 +1,7 @@
 import {Modal, TextInput, View} from "react-native";
 import {useState} from "react";
 import {Picker} from "@react-native-picker/picker";
-import {getCategories, getTaskInfo, storeNewTaskItem, storeTask} from "@/src/Database/db";
+import {getCategories, getTaskInfo, storeNewTaskItem} from "@/src/Database/db";
 import {router, useLocalSearchParams} from "expo-router";
 import {AntDesign} from "@expo/vector-icons";
 import IconsView from "@/components/timetracker/IconsView";
@@ -10,7 +10,6 @@ import {TaskItem} from "@/src/types";
 
 
 export default function EditTask() {
-    const [taskData, setTaskData] = useState<TaskItem[]>();
     const params = useLocalSearchParams();
 
     const [taskName, setTaskName] = useState("");
@@ -21,19 +20,19 @@ export default function EditTask() {
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
 
     if (params?.taskName) {
-        getTaskInfo(params.taskName as string).then((r: TaskItem) => {
-            setTaskData([r]);
-            setTaskName(r.taskName);
-            setCategory(r.category);
-            setIcon(icons[r.icon as keyof typeof icons]);
+        getTaskInfo(params.taskName as string).then((r) => {
+            const taskItem = r[0] as TaskItem;
+            setTaskName(taskItem.taskName);
+            setCategory(taskItem.category);
+            setIcon(icons[taskItem.icon as keyof typeof icons]);
         });
     }
-    getCategories().then((r) => setCategories(r));
+    getCategories().then((r) => setCategories(r as { id: number, category: string }[]));
 
     console.log(icons["defaultIcon"]);
 
     function storeTaskItem() {
-        storeNewTaskItem(taskName, category, icon).then(() => router.push('/TaskList'));
+        storeNewTaskItem({taskName, category, icon}).then(() => router.push('/TaskList'));
     }
 
     function onPressIcon(icon: string) {
@@ -47,7 +46,7 @@ export default function EditTask() {
             <TextInput placeholder="Name of Task" onChangeText={setTaskName} maxLength={20} />
             <Picker
                 selectedValue={category}
-                onValueChange={(itemValue, itemIndex) => setCategory(itemValue)}
+                onValueChange={(itemValue) => setCategory(itemValue)}
             >
                 {categories.length > 0 ? (
                     categories.map((category) => (

@@ -1,8 +1,8 @@
 import {FlatList, View, Image, StyleSheet, Pressable} from "react-native";
 import {icons} from "@/src/Utils";
 
-export default function IconsView(props) {
-    function renderItem({ item }) {
+export default function IconsView(props: { onPressIcon: (icon: string) => void }) {
+    function renderItem({ item }: { item: string }) {
         return (
             <View>
                 <Pressable style={styles.iconContainer} onPress={() => props.onPressIcon(icons[item])}>

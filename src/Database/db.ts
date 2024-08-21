@@ -1,6 +1,7 @@
 import * as SQLite from "expo-sqlite";
 import * as FileSystem from 'expo-file-system';
 import {Asset} from "expo-asset";
+import {PastTaskData, TaskItem} from "@/src/types";
 
 async function initDb() {
     const internalDbName = "Productite.sqlite";
@@ -27,24 +28,24 @@ export async function deleteDb() {
     }
 }
 
-export async function storeTask(task: string, timeSpent: number, timestamp: number) {
+export async function storeTask({taskName, timeSpent, timestamp}: PastTaskData) {
     const db = await initDb();
     try {
         await db.runAsync(
-            'INSERT INTO pastTasks (task, timeSpent, timestamp) VALUES (?, ?, ?);',
-            [task, timeSpent, timestamp]
+            'INSERT INTO pastTasks (taskName, timeSpent, timestamp) VALUES (?, ?, ?);',
+            [taskName, timeSpent, timestamp]
         );
     } catch (error) {
         console.error("Failed to store task:", error);
     }
 }
 
-export async function storeNewTaskItem(task: string, category: string | null, icon: string) {
+export async function storeNewTaskItem({taskName, category, icon}: TaskItem) {
     const db = await initDb();
     try {
         await db.runAsync(
-            'INSERT INTO taskList (task, category, icon) VALUES (?, ?, ?);', // change to taskList
-            [task, category, icon]
+            'INSERT INTO taskList (taskName, category, icon) VALUES (?, ?, ?);',
+            [taskName, category, icon]
         );
     } catch (error) {
         console.error("Failed to store task:", error);
@@ -53,7 +54,7 @@ export async function storeNewTaskItem(task: string, category: string | null, ic
 
 export async function deleteTaskFromTaskList(taskName: string) {
     const db = await initDb();
-    return db.runAsync(`DELETE FROM taskList WHERE task = ${taskName};`);
+    return db.runAsync(`DELETE FROM taskList WHERE taskName = ${taskName};`);
 }
 
 export async function getPastTasks() {
@@ -61,9 +62,9 @@ export async function getPastTasks() {
     return db.getAllAsync('SELECT * FROM pastTasks;');
 }
 
-export async function getTaskInfo(taskName: string) {
+export async function getTaskInfo(taskName: string){
     const db = await initDb();
-    return db.getAllAsync(`SELECT * FROM taskList WHERE task = ${taskName};`);
+    return db.getAllAsync(`SELECT * FROM taskList WHERE taskName = ${taskName};`);
 }
 
 export async function getTaskList() {
@@ -78,5 +79,5 @@ export async function getCategories() {
 
 export async function getTaskTimeSum() {
     const db = await initDb();
-    return db.getAllAsync(`SELECT task, SUM(timeSpent) as timeSpent FROM pastTasks GROUP BY task;`);
+    return db.getAllAsync(`SELECT taskName, SUM(timeSpent) as timeSpent FROM pastTasks GROUP BY taskName;`);
 }

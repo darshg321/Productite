@@ -1,11 +1,12 @@
 import { View, StyleSheet, Image, Text } from "react-native";
 import {icons} from "@/src/Utils";
+import {TaskItem} from "@/src/types";
 
-export default function TaskListBox(props) {
+export default function TaskListBox(props: TaskItem) {
     return (
         <View style={styles.container}>
-            <Image style={styles.icon} source={icons[props.icon]}></Image>
-            <Text>{props.task}</Text>
+            <Image style={styles.icon} source={icons[props.icon as keyof typeof icons]}></Image>
+            <Text>{props.taskName}</Text>
             <Text>{props.category || "Uncategorized"}</Text>
         </View>
     );

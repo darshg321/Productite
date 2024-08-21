@@ -5,7 +5,7 @@ import {PastTaskData} from "@/src/types";
 export default function PastTasksView(props: { data: PastTaskData[] }) {
     function renderItem({ item }: { item: PastTaskData }) {
         return (
-            <PastTaskBox taskName={item.taskName} timeSpent={item.timeSpent} />
+            <PastTaskBox taskName={item.taskName} timeSpent={item.timeSpent}  timestamp={item.timestamp}/>
         );
     }
 

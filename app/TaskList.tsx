@@ -8,7 +8,7 @@ import {MenuProvider} from "react-native-popup-menu";
 import {TaskItem} from "@/src/types";
 
 export default function TaskList() {
-    const [taskList, setTaskList] = useState<TaskItem[]>();
+    const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
     getTaskList().then(r => setTaskList(r as TaskItem[]));
 

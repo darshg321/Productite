@@ -1,6 +1,6 @@
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, StyleSheet, ViewStyle} from "react-native";
 
-export function Stopwatch(props: {time: string}) {
+export function Stopwatch(props: {time: string, style?: ViewStyle}) {
     return (
         <View style={styles.container}>
             <Text style={styles.timeText}>{props.time}</Text>

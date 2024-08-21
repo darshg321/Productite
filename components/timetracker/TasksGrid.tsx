@@ -5,17 +5,17 @@ import {TaskItem} from "@/src/types";
 interface TasksGridProps {
     onPress: (taskName: string) => void,
     data: TaskItem[],
-    }
+}
 
 export default function TasksGrid(props: TasksGridProps) {
     return (
         <ScrollView contentContainerStyle={styles.grid}>
             {props.data.map((item, index) => (
                 <View key={index} style={styles.item}>
-                    <Pressable onPress={() => props.onPress(item.task)}>
+                    <Pressable onPress={() => props.onPress(item.taskName)}>
                         <View>
                             <Image source={icons[item.icon as keyof typeof icons]} style={styles.icon}/>
-                            <Text style={styles.text}>{item.task}</Text>
+                            <Text style={styles.text}>{item.taskName}</Text>
                             <Text style={styles.category}>{item.category || "Uncategorized"}</Text>
                         </View>
                     </Pressable>

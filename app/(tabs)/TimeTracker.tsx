@@ -11,7 +11,7 @@ import {TaskItem} from "@/src/types";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
-    const [time, setTime] = useState(0);
+    const [timeSpent, setTimeSpent] = useState(0);
     const [startTime, setStartTime] = useState(0);
     const [pauseTime, setPauseTime] = useState(0);
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
@@ -21,7 +21,7 @@ export default function TimeTracker() {
     getTaskList().then(r => setTaskList(r as TaskItem[]));
 
     function startTask(taskName: string) {
-        setTime(0);
+        setTimeSpent(0);
         setTotalPausedDuration(0);
         setStartTime(Date.now());
         setTaskName(taskName)
@@ -29,10 +29,10 @@ export default function TimeTracker() {
     }
 
     function stopTask() {
-        setTime(Date.now() - startTime - totalPausedDuration);
+        setTimeSpent(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeTask(taskName, time, Date.now()) // FIXME add category, timestamp
-        setTime(0);
+        storeTask({taskName, timeSpent, timestamp: Date.now()})
+        setTimeSpent(0);
     }
 
     function pauseTask() {
@@ -54,8 +54,8 @@ export default function TimeTracker() {
         if (taskStatus === TaskStatus.running) {
             interval = setInterval(() => {
                 const now = Date.now();
-                if (time < 1187900) { // 23 hours 59 minutes 59 seconds
-                    setTime(now - startTime - totalPausedDuration);
+                if (timeSpent < 1187900) { // 23 hours 59 minutes 59 seconds
+                    setTimeSpent(now - startTime - totalPausedDuration);
                 } else {
                     stopTask();
                 }
@@ -77,7 +77,7 @@ export default function TimeTracker() {
                 }}}>
             </TasksGrid>
             <Ionicons style={styles.options} name="options" size={40} color="black" onPress={() => router.push("/TaskList")} />
-            <Stopwatch time={msToTime(time)} style={styles.stopwatch}/>
+            <Stopwatch time={msToTime(timeSpent)} style={styles.stopwatch}/>
             <TaskStatusButtons style={styles.taskStatusButtons} taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
                                onPressStop={stopTask}/>
         </View>
