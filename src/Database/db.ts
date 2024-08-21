@@ -10,8 +10,7 @@ async function initDb() {
         const asset = Asset.fromModule(require("@/assets/Productite.db"));
         await FileSystem.downloadAsync(asset.uri, sqlDir + internalDbName);
     }
-    const db= await SQLite.openDatabaseAsync(internalDbName);
-    return db;
+    return await SQLite.openDatabaseAsync(internalDbName);
 }
 
 export async function clearPastTasks() {
@@ -28,19 +27,19 @@ export async function deleteDb() {
     }
 }
 
-export async function storeTask(task, category, time) {
+export async function storeTask(task: string, timeSpent: number, timestamp: number) {
     const db = await initDb();
     try {
         await db.runAsync(
-            'INSERT INTO pastTasks (task, category, time) VALUES (?, ?, ?);',
-            [task, category, time]
+            'INSERT INTO pastTasks (task, timeSpent, timestamp) VALUES (?, ?, ?);',
+            [task, timeSpent, timestamp]
         );
     } catch (error) {
         console.error("Failed to store task:", error);
     }
 }
 
-export async function storeNewTaskItem(task, category, icon) {
+export async function storeNewTaskItem(task: string, category: string | null, icon: string) {
     const db = await initDb();
     try {
         await db.runAsync(
@@ -52,7 +51,7 @@ export async function storeNewTaskItem(task, category, icon) {
     }
 }
 
-export async function deleteTaskFromTaskList(taskName) {
+export async function deleteTaskFromTaskList(taskName: string) {
     const db = await initDb();
     return db.runAsync(`DELETE FROM taskList WHERE task = ${taskName};`);
 }
@@ -62,7 +61,7 @@ export async function getPastTasks() {
     return db.getAllAsync('SELECT * FROM pastTasks;');
 }
 
-export async function getTaskInfo(taskName) {
+export async function getTaskInfo(taskName: string) {
     const db = await initDb();
     return db.getAllAsync(`SELECT * FROM taskList WHERE task = ${taskName};`);
 }
@@ -77,7 +76,7 @@ export async function getCategories() {
     return db.getAllAsync('SELECT * FROM categories;');
 }
 
-export async function runCustomGetAll(operation) {
+export async function getTaskTimeSum() {
     const db = await initDb();
-    return db.getAllAsync(operation);
+    return db.getAllAsync(`SELECT task, SUM(timeSpent) as timeSpent FROM pastTasks GROUP BY task;`);
 }

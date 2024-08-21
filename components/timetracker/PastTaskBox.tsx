@@ -5,7 +5,7 @@ export default function PastTaskBox(props) {
         <View style={styles.container}>
             <View style={styles.textContainer}>
                 <Text style={styles.taskText}>{props.task}</Text>
-                <Text style={styles.category}>{props.category}</Text>
+                <Text style={styles.timestamp}>{props.timestamp}</Text>
             </View>
             <Text style={styles.timeText}>{props.time}</Text>
         </View>
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
     },
-    category: {
+    timestamp: {
         fontSize: 14,
         color: '#666',
     },

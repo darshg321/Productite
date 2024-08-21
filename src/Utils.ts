@@ -1,8 +1,8 @@
 
-export function msToTime(duration) {
-    let seconds = parseInt((duration/1000)%60),
-        minutes = parseInt((duration/(1000*60))%60),
-        hours = parseInt((duration/(1000*60*60))%24);
+export function msToTime(duration: number) {
+    let seconds: string | number = parseInt(String((duration / 1000) % 60)),
+        minutes: string | number = parseInt(String((duration / (1000 * 60)) % 60)),
+        hours: string | number = parseInt(String((duration / (1000 * 60 * 60)) % 24));
 
     hours = (hours < 10) ? "0" + hours : hours;
     minutes = (minutes < 10) ? "0" + minutes : minutes;
@@ -17,7 +17,7 @@ export const icons = {
     coding: require('@/assets/images/taskicons/coding.png'),
     cooking: require('@/assets/images/taskicons/cooking.png'),
     cubing: require('@/assets/images/taskicons/cubing.png'),
-    default: require('@/assets/images/taskicons/default.png'),
+    defaultIcon: require('@/assets/images/taskicons/default.png'),
     eating: require('@/assets/images/taskicons/eating.png'),
     science: require('@/assets/images/taskicons/science.png'),
     showering: require('@/assets/images/taskicons/showering.png'),

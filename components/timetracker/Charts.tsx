@@ -1,7 +1,7 @@
 import {View, StyleSheet, Text} from "react-native";
 import {PieChart} from "react-native-gifted-charts";
 import {useState} from "react";
-import {runCustomGetAll} from "@/src/Database/db";
+import {getTaskTimeSum} from "@/src/Database/db";
 
 function taskDataToChartData(taskData) {
     const colors = [
@@ -19,7 +19,7 @@ export function TasksPieChart() {
     let [taskData, setTaskData] = useState([]);
 
     // FIXME bad performance
-    runCustomGetAll('SELECT task, SUM(time) as time FROM pastTasks GROUP BY task;').then(r => setTaskData(r))
+    getTaskTimeSum().then(r => setTaskData(r))
 
     return (
         <View style={styles.container}>

@@ -7,6 +7,7 @@ import {getTaskList, storeTask} from "@/src/Database/db";
 import {msToTime} from "@/src/Utils";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {router} from "expo-router";
+import {TaskItem} from "@/src/types";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -15,11 +16,11 @@ export default function TimeTracker() {
     const [pauseTime, setPauseTime] = useState(0);
     const [totalPausedDuration, setTotalPausedDuration] = useState(0);
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
-    const [taskList, setTaskList] = useState([]);
+    const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
-    getTaskList().then(r => setTaskList(r))
+    getTaskList().then(r => setTaskList(r as TaskItem[]));
 
-    function startTask(taskName) {
+    function startTask(taskName: string) {
         setTime(0);
         setTotalPausedDuration(0);
         setStartTime(Date.now());
@@ -30,7 +31,7 @@ export default function TimeTracker() {
     function stopTask() {
         setTime(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeTask(taskName, null, time) // FIXME add category, timestamp
+        storeTask(taskName, time, Date.now()) // FIXME add category, timestamp
         setTime(0);
     }
 
@@ -48,19 +49,17 @@ export default function TimeTracker() {
     }
 
     useEffect(() => {
-        let interval = null;
+        let interval: NodeJS.Timeout;
 
         if (taskStatus === TaskStatus.running) {
             interval = setInterval(() => {
                 const now = Date.now();
-                if (time < 359998900) {
+                if (time < 1187900) { // 23 hours 59 minutes 59 seconds
                     setTime(now - startTime - totalPausedDuration);
                 } else {
                     stopTask();
                 }
             }, 1000);
-        } else {
-            clearInterval(interval);
         }
 
         return () => {
@@ -72,12 +71,12 @@ export default function TimeTracker() {
 
     return (
         <View style={styles.container}>
-            <TasksGrid data={taskList} onPress={(r) => {
+            <TasksGrid data={taskList} onPress={(taskName: string) => {
                 if (taskStatus == TaskStatus.notStarted) {
-                    startTask(r)
+                    startTask(taskName)
                 }}}>
             </TasksGrid>
-            <Ionicons style={styles.options} name="options" size={40} color="black" onPress={() => {router.push("/TaskList")}} />
+            <Ionicons style={styles.options} name="options" size={40} color="black" onPress={() => router.push("/TaskList")} />
             <Stopwatch time={msToTime(time)} style={styles.stopwatch}/>
             <TaskStatusButtons taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
                                onPressStop={stopTask} style={styles.taskStatusButtons}/>

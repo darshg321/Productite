@@ -14,7 +14,7 @@ export default function EditTask() {
 
     const [taskName, setTaskName] = useState();
     const [category, setCategory] = useState();
-    const [icon, setIcon] = useState(icons["default"]);
+    const [icon, setIcon] = useState(icons[defaultIcon]);
     const [categories, setCategories] = useState([]);
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
 

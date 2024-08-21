@@ -1,5 +1,5 @@
 import { View, StyleSheet } from "react-native";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {deleteTaskFromTaskList, getTaskList} from "@/src/Database/db";
 import TaskListView from "@/components/timetracker/TaskListView";
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -7,7 +7,7 @@ import {router} from "expo-router";
 import {MenuProvider} from "react-native-popup-menu";
 
 export default function TaskList() {
-    const [taskList, setTaskList] = useState([]);
+    const [taskList, setTaskList] = useState();
 
     getTaskList().then(data => setTaskList(data));
 
