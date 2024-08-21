@@ -52,6 +52,11 @@ export async function storeNewTaskItem(task, category, icon) {
     }
 }
 
+export async function deleteTaskFromTaskList(taskName) {
+    const db = await initDb();
+    return db.runAsync(`DELETE FROM taskList WHERE task = ${taskName};`);
+}
+
 export async function getPastTasks() {
     const db = await initDb();
     return db.getAllAsync('SELECT * FROM pastTasks;');

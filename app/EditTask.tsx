@@ -2,18 +2,22 @@ import {Modal, TextInput, View} from "react-native";
 import {useState} from "react";
 import {Picker} from "@react-native-picker/picker";
 import {getCategories, storeNewTaskItem, storeTask} from "@/src/Database/db";
-import {router} from "expo-router";
+import {router, useLocalSearchParams} from "expo-router";
 import {AntDesign} from "@expo/vector-icons";
 import IconsView from "@/components/timetracker/IconsView";
 import {icons} from "@/src/Utils";
 
 
-export default function CreateTask() {
-    const [taskName, setTaskName] = useState("");
-    const [category, setCategory] = useState();
+export default function EditTask() {
+    const editTask = useLocalSearchParams();
+
+    const [taskName, setTaskName] = useState(editTask.task || "");
+    const [category, setCategory] = useState(editTask.category || null);
     const [categories, setCategories] = useState([]);
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
-    const [icon, setIcon] = useState(icons["default"]);
+    const [icon, setIcon] = useState(icons[editTask.icon || "default"]);
+
+    console.log(icons["default"]);
 
     function storeTaskItem() {
         storeNewTaskItem(taskName, category, icon).then(() => router.push('/EditTasks'));

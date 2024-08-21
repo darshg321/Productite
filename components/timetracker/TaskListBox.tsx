@@ -1,14 +1,12 @@
 import { View, StyleSheet, Image, Text } from "react-native";
-import Entypo from '@expo/vector-icons/Entypo';
 import {icons} from "@/src/Utils";
 
-export default function EditTasksBox(props) {
+export default function TaskListBox(props) {
     return (
         <View style={styles.container}>
             <Image style={styles.icon} source={icons[props.icon]}></Image>
             <Text>{props.task}</Text>
             <Text>{props.category || "Uncategorized"}</Text>
-            <Entypo name="dots-three-vertical" size={24} color="black" />
         </View>
     );
 }
