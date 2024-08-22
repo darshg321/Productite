@@ -5,7 +5,12 @@ export default function IconsView(props: { onPressIcon: (icon: string) => void }
     function renderItem({ item }: { item: ImageSourcePropType }) {
         return (
             <View>
-                <Pressable style={styles.iconContainer} onPress={() => props.onPressIcon(item)}> {/*FIXME this isnt the file*/}
+                <Pressable style={styles.iconContainer} onPress={() => {
+                    const iconKey = Object.keys(icons).find(key => icons[key as keyof typeof icons] === item);
+                    if (iconKey) {
+                        props.onPressIcon(iconKey);
+                    }
+                }}>
                     <Image style={styles.icon} source={item}/>
                 </Pressable>
             </View>

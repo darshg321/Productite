@@ -20,8 +20,10 @@ export default function TaskList() {
     }
 
     function editTask(taskName: string) {
-        router.setParams({ taskName: taskName });
-        router.push('/EditTask');
+        router.push({
+            pathname: '/EditTask',
+            params: {taskName: taskName}
+        });
     }
 
     return (

@@ -54,7 +54,7 @@ export async function storeNewTaskItem({taskName, category, icon}: TaskItem) {
 
 export async function deleteTaskFromTaskList(taskName: string) {
     const db = await initDb();
-    return db.runAsync(`DELETE FROM taskList WHERE taskName = ${taskName};`);
+    return db.runAsync(`DELETE FROM taskList WHERE taskName = ?;`, [taskName]);
 }
 
 export async function getPastTasks() {
@@ -62,9 +62,10 @@ export async function getPastTasks() {
     return db.getAllAsync('SELECT * FROM pastTasks;');
 }
 
-export async function getTaskInfo(taskName: string){
+export async function getTaskInfo(taskName: string): Promise<TaskItem> {
     const db = await initDb();
-    return db.getAllAsync(`SELECT * FROM taskList WHERE taskName = ${taskName};`);
+    const r: TaskItem | null = await db.getFirstAsync(`SELECT * FROM taskList WHERE taskName = ?;`, [taskName]);
+    return r ? r : {taskName: "", category: null, icon: ""} as TaskItem;
 }
 
 export async function getTaskList() {
