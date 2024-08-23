@@ -1,5 +1,5 @@
-import {Modal, TextInput, View, StyleSheet} from "react-native";
-import {useState} from "react";
+import {Modal, TextInput, View, StyleSheet, Image, Pressable} from "react-native";
+import {useEffect, useState} from "react";
 import {Picker} from "@react-native-picker/picker";
 import {getCategories, getTaskInfo, storeNewTaskItem} from "@/src/Database/db";
 import {router, useGlobalSearchParams, useLocalSearchParams} from "expo-router";
@@ -14,20 +14,38 @@ export default function EditTask() {
     const [taskName, setTaskName] = useState("");
     const [category, setCategory] = useState<string | null>(null);
     const [icon, setIcon] = useState(icons["defaultIcon"]);
-    const [categories, setCategories] = useState<{ id: number, category: string }[]>([]);
+    const [categories, setCategories] = useState<{ category: string }[]>([]);
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
 
-    if (params.taskName) {
-        getTaskInfo(params.taskName as string).then((r: TaskItem) => {
-            setTaskName(r.taskName);
-            setCategory(r.category);
-            setIcon(icons[r.icon as keyof typeof icons]);
-        });
-    }
-    getCategories().then((r) => setCategories(r as { id: number, category: string }[]));
+    // if (params.taskName) {
+    //     getTaskInfo(params.taskName as string).then((r: TaskItem) => {
+    //         setTaskName(r.taskName);
+    //         setCategory(r.category);
+    //         setIcon(icons[r.icon as keyof typeof icons]);
+    //     });
+    // }
+
+    useEffect(() => {
+        if (params.taskName) {
+            getTaskInfo(params.taskName as string).then((r: TaskItem) => {
+                setTaskName(r.taskName);
+                setCategory(r.category);
+                setIcon(icons[r.icon as keyof typeof icons]);
+            });
+        }
+    }, [params.taskName]);
+
+    useEffect(() => {
+        getCategories().then((r) => setCategories(r as {category: string }[]));
+    }, []);
+
+    // getCategories().then((r) => setCategories(r as { id: number, category: string }[]));
 
     function storeTaskItem() {
-        storeNewTaskItem({taskName, category, icon}).then(() => router.push('/TaskList'));
+        storeNewTaskItem({taskName, category, icon}).then(() => {
+            router.setParams();
+            router.push('/TaskList')
+        });
     }
 
     function onPressIcon(icon: string) {
@@ -52,16 +70,18 @@ export default function EditTask() {
             >
                 {categories.length > 0 ? (
                     categories.map((category) => (
-                        <Picker.Item key={category.id} label={category.category} value={category.category}/>
+                        <Picker.Item label={category.category} value={category.category}/>
                     ))
                 ) : (
                     <Picker.Item label="Uncategorized" value={null}/>
                 )}
             </Picker>
             <View style={styles.iconRow}>
-                <AntDesign name="clockcircleo" size={24} color="black" onPress={() => setIconsViewVisible(true)} style={styles.icon}/>
+                <Pressable onPress={() => setIconsViewVisible(true)}>
+                    <Image source={icon} style={{width: 48, height: 48}}/>
+                </Pressable>
                 <AntDesign name="checkcircleo" size={24} color="black" onPress={() => storeTaskItem()} style={styles.icon}/>
-                <AntDesign name="closecircleo" size={24} color="black" onPress={() => router.push('/EditTask')} style={styles.icon}/>
+                <AntDesign name="closecircleo" size={24} color="black" onPress={() => router.push('/TaskList')} style={styles.icon}/>
             </View>
             <Modal visible={iconsViewVisible}
                    animationType="none"

@@ -5,8 +5,6 @@ import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatus
 import TasksGrid from "@/components/timetracker/TasksGrid";
 import {getTaskList, storeTask} from "@/src/Database/db";
 import {msToTime} from "@/src/Utils";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import {router} from "expo-router";
 import {TaskItem} from "@/src/types";
 
 export default function TimeTracker() {
@@ -18,7 +16,10 @@ export default function TimeTracker() {
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
-    getTaskList().then(r => setTaskList(r as TaskItem[]));
+    // doesnt refresh on tasklist create
+    useEffect(() => {
+        getTaskList().then(r => setTaskList(r as TaskItem[]));
+    }, []);
 
     function startTask(taskName: string) {
         setTimeSpent(0);
@@ -31,7 +32,7 @@ export default function TimeTracker() {
     function stopTask() {
         setTimeSpent(Date.now() - startTime - totalPausedDuration);
         setTaskStatus(TaskStatus.notStarted);
-        storeTask({taskName, timeSpent, timestamp: Date.now()})
+        storeTask({ taskName, timeSpent, timestamp: Date.now() });
         setTimeSpent(0);
     }
 
@@ -76,7 +77,6 @@ export default function TimeTracker() {
                     startTask(taskName)
                 }}}>
             </TasksGrid>
-            <Ionicons style={styles.options} name="options" size={40} color="black" onPress={() => router.push("/TaskList")} />
             <Stopwatch time={msToTime(timeSpent)} style={styles.stopwatch}/>
             <TaskStatusButtons style={styles.taskStatusButtons} taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
                                onPressStop={stopTask}/>
@@ -89,10 +89,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f0f0f0',
         padding: 20,
-    },
-    options: {
-        padding: 10,
-        marginVertical: 10,
     },
     stopwatch: {
         borderColor: '#000',
