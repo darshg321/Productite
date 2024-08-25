@@ -1,44 +1,43 @@
-import {Modal, TextInput, View, StyleSheet, Image, Pressable} from "react-native";
-import {useEffect, useState} from "react";
-import {Picker} from "@react-native-picker/picker";
-import {getCategories, getTaskInfo, storeNewTaskItem} from "@/src/Database/db";
-import {router, useGlobalSearchParams, useLocalSearchParams} from "expo-router";
-import {AntDesign} from "@expo/vector-icons";
+import { Modal, TextInput, View, StyleSheet, Image, Pressable } from "react-native";
+import { useEffect, useState } from "react";
+import { Picker } from "@react-native-picker/picker";
+import { getCategories, getTaskInfo, storeNewTaskItem } from "@/src/Database/db";
+import { router, useGlobalSearchParams } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 import IconsView from "@/components/timetracker/IconsView";
-import {icons} from "@/src/Utils";
-import {TaskItem} from "@/src/types";
+import { icons } from "@/src/Utils";
+import { TaskItem } from "@/src/types";
 
 export default function EditTask() {
-    const params = useGlobalSearchParams<{taskName?: string}>();
+    const params = useGlobalSearchParams<{ taskName?: string }>();
 
-    const [taskName, setTaskName] = useState("");
+    const [taskName, setTaskName] = useState<string>("");
     const [category, setCategory] = useState<string | null>(null);
-    const [icon, setIcon] = useState(icons["defaultIcon"]);
+    const [icon, setIcon] = useState<string>("defaultIcon");
     const [categories, setCategories] = useState<{ category: string }[]>([]);
-    const [iconsViewVisible, setIconsViewVisible] = useState(false);
+    const [iconsViewVisible, setIconsViewVisible] = useState<boolean>(false);
 
     useEffect(() => {
         if (params.taskName) {
+            console.log("Getting task info for", params.taskName);
             getTaskInfo(params.taskName as string).then((r: TaskItem) => {
                 setTaskName(r.taskName);
                 setCategory(r.category);
-                setIcon(icons[r.icon as keyof typeof icons]);
+                setIcon(r.icon);
             });
         }
     }, [params.taskName]);
 
-    // FIXME bad performance
     getCategories().then((r) => setCategories(r as { category: string }[]));
 
     function storeTaskItem() {
-        storeNewTaskItem({taskName, category, icon}).then(() => {
+        storeNewTaskItem({ taskName, category, icon }).then(() => {
             router.setParams();
             router.push('/TaskList')
         });
     }
 
     function onPressIcon(icon: string) {
-        console.log(icon);
         setIcon(icon);
         setIconsViewVisible(false);
     }
@@ -59,28 +58,20 @@ export default function EditTask() {
             >
                 {categories.length > 0 ? (
                     categories.map((category) => (
-                        <Picker.Item label={category.category} value={category.category}/>
+                        <Picker.Item label={category.category} value={category.category} />
                     ))
                 ) : (
-                    <Picker.Item label="Uncategorized" value={null}/>
+                    <Picker.Item label="Uncategorized" value={null} />
                 )}
             </Picker>
             <View style={styles.iconRow}>
                 <Pressable onPress={() => setIconsViewVisible(true)}>
-                    <Image source={icon} style={{width: 48, height: 48}}/>
+                    <Image source={icons[icon as keyof typeof icons]} style={{ width: 48, height: 48 }} />
                 </Pressable>
-                <AntDesign name="checkcircleo" size={24} color="black" onPress={() => storeTaskItem()} style={styles.icon}/>
-                <AntDesign name="closecircleo" size={24} color="black" onPress={() => router.push('/TaskList')} style={styles.icon}/>
+                <AntDesign name="checkcircleo" size={24} color="black" onPress={() => storeTaskItem()} style={styles.icon} />
+                <AntDesign name="closecircleo" size={24} color="black" onPress={() => router.push('/TaskList')} style={styles.icon} />
             </View>
-            <Modal visible={iconsViewVisible}
-                   animationType="none"
-                   transparent={true}
-                   onRequestClose={() => setIconsViewVisible(false)}>
-                <View style={styles.modalContainer}>
-                    <IconsView onPressIcon={onPressIcon}/>
-                    <AntDesign name="closecircleo" size={24} color="black" onPress={() => setIconsViewVisible(false)} style={styles.icon}/>
-                </View>
-            </Modal>
+            <IconsView visible={iconsViewVisible} onPressIcon={onPressIcon} onClose={() => setIconsViewVisible(false)} />
         </View>
     )
 }
@@ -113,11 +104,5 @@ const styles = StyleSheet.create({
     },
     icon: {
         padding: 10,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 });

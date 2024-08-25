@@ -1,60 +1,78 @@
-import {FlatList, View, Image, StyleSheet, Pressable, ImageSourcePropType} from "react-native";
-import {icons} from "@/src/Utils";
+import { FlatList, View, Image, StyleSheet, Pressable, Modal } from "react-native";
+import { icons } from "@/src/Utils";
+import { AntDesign } from "@expo/vector-icons";
 
-export default function IconsView(props: { onPressIcon: (icon: string) => void }) {
-    function renderItem({ item }: { item: ImageSourcePropType }) {
+export default function IconsView(props: { onPressIcon: (icon: string) => any, visible: boolean, onClose: () => void }) {
+    function renderItem({ item }: { item: string }) {
         return (
-            <View>
-                <Pressable style={styles.iconContainer} onPress={() => {
-                    const iconKey = Object.keys(icons).find(key => icons[key as keyof typeof icons] === item);
-                    if (iconKey) {
-                        props.onPressIcon(iconKey);
-                    }
-                }}>
-                    <Image style={styles.icon} source={item}/>
-                </Pressable>
-            </View>
+            <Pressable style={styles.iconContainer} onPress={() => {
+                props.onPressIcon(item);
+            }}>
+                <Image style={styles.icon} source={icons[item as keyof typeof icons]} />
+            </Pressable>
         );
     }
 
     return (
-        <View style={styles.wrapper}>
-            <FlatList
-                data={Object.keys(icons).map(key => icons[key as keyof typeof icons])}
-                renderItem={renderItem}
-                contentContainerStyle={styles.container}
-            />
-        </View>
+        <Modal
+            visible={props.visible}
+            animationType="fade"
+            transparent={true}
+            onRequestClose={props.onClose}
+        >
+            <View style={styles.modalContainer}>
+                <View style={styles.wrapper}>
+                    <View style={styles.header}>
+                        <AntDesign name="close" size={24} color="black" onPress={props.onClose} />
+                    </View>
+                    <FlatList
+                        data={Object.keys(icons)}
+                        renderItem={renderItem}
+                        contentContainerStyle={styles.container}
+                        numColumns={3}
+                        initialNumToRender={18}
+                        maxToRenderPerBatch={18}
+                        windowSize={5}
+                    />
+                </View>
+            </View>
+        </Modal>
     );
 }
 
 const styles = StyleSheet.create({
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
     wrapper: {
         backgroundColor: '#f0f0f0',
+        borderRadius: 20,
+        overflow: 'hidden',
+        width: '80%',
+        maxHeight: '70%',
+    },
+    header: {
+        padding: 10,
+        alignItems: 'flex-end',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
     },
     container: {
-        padding: 20,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        justifyContent: 'flex-start',
+        paddingVertical: 10,
     },
     iconContainer: {
-        width: 100,
-        height: 100,
+        width: '33.33%',
+        aspectRatio: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-        margin: 5,
+        padding: 10,
     },
     icon: {
-        width: '50%',
-        height: '50%',
+        width: '70%',
+        height: '70%',
         resizeMode: 'contain',
     }
 });
