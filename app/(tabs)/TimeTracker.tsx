@@ -16,17 +16,15 @@ export default function TimeTracker() {
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
-    // doesnt refresh on tasklist create
-    useEffect(() => {
-        getTaskList().then(r => setTaskList(r as TaskItem[]));
-    }, []);
+    // FIXME bad performance
+    getTaskList().then(r => setTaskList(r as TaskItem[]));
 
     function startTask(taskName: string) {
         setTimeSpent(0);
         setTotalPausedDuration(0);
+        setTaskStatus(TaskStatus.running);
         setStartTime(Date.now());
         setTaskName(taskName)
-        setTaskStatus(TaskStatus.running);
     }
 
     function stopTask() {

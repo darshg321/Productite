@@ -1,100 +1,117 @@
-import * as SQLite from "expo-sqlite";
+import * as SQLite from "expo-sqlite/legacy";
 import * as FileSystem from 'expo-file-system';
 import { Asset } from "expo-asset";
 import { PastTaskData, TaskItem } from "@/src/types";
 
-async function initDb() {
-    const internalDbName = "Productite.sqlite";
-    const sqlDir = FileSystem.documentDirectory + "SQLite/";
-    if (!(await FileSystem.getInfoAsync(sqlDir + internalDbName)).exists) {
-        await FileSystem.makeDirectoryAsync(sqlDir, {intermediates: true});
-        const asset = Asset.fromModule(require("@/assets/Productite.db"));
-        await FileSystem.downloadAsync(asset.uri, sqlDir + internalDbName);
+const DB_NAME = "Productite.sqlite";
+const SQL_DIR = FileSystem.documentDirectory + "SQLite/";
+
+let db: SQLite.SQLiteDatabase | null = null;
+
+async function getDb(): Promise<SQLite.SQLiteDatabase> {
+    if (db !== null) {
+        return db;
     }
-    return await SQLite.openDatabaseAsync(internalDbName);
+
+    const dbPath = SQL_DIR + DB_NAME;
+    try {
+        const { exists } = await FileSystem.getInfoAsync(dbPath);
+        if (!exists) {
+            await FileSystem.makeDirectoryAsync(SQL_DIR, { intermediates: true });
+            const asset = Asset.fromModule(require("@/assets/Productite.db"));
+            await FileSystem.downloadAsync(asset.uri, dbPath);
+        }
+
+        db = SQLite.openDatabase(DB_NAME);
+        return db;
+    } catch (error) {
+        console.error("Failed to initialize database:", error);
+        throw new Error("Database initialization failed");
+    }
 }
 
-export async function clearPastTasks() {
-    const db = await initDb();
-    console.log("clearPastTasks");
+async function executeQuery<T>(query: string, params: any[] = []): Promise<T> {
     try {
-        await db.withTransactionAsync(async () => {
-            await db.execAsync('DELETE FROM pastTasks;');
+        const database = await getDb();
+        return new Promise((resolve, reject) => {
+            database.transaction(tx => {
+                tx.executeSql(
+                    query,
+                    params,
+                    (_, result) => resolve(result.rows._array as T),
+                    (_, error) => {
+                        console.error(`Query failed: ${query}`, error);
+                        reject(error);
+                        return false;
+                    }
+                );
+            }, (error) => {
+                console.error("Transaction error:", error);
+                reject(error);
+            });
         });
+    } catch (error) {
+        console.error("Failed to execute query:", error);
+        throw error;
+    }
+}
+
+export async function clearPastTasks(): Promise<void> {
+    try {
+        await executeQuery('DELETE FROM pastTasks;');
     } catch (error) {
         console.error("Failed to clear past tasks:", error);
     }
 }
 
-export async function deleteDb() {
-    const internalDbName = "Productite.sqlite";
-    const sqlDir = FileSystem.documentDirectory + "SQLite/";
-    if ((await FileSystem.getInfoAsync(sqlDir + internalDbName)).exists) {
-        await FileSystem.deleteAsync(sqlDir + internalDbName);
+export async function deleteDb(): Promise<void> {
+    try {
+        const dbPath = SQL_DIR + DB_NAME;
+        const { exists } = await FileSystem.getInfoAsync(dbPath);
+        if (exists) {
+            await FileSystem.deleteAsync(dbPath);
+        }
+        db = null; // Reset the database connection
+    } catch (error) {
+        console.error("Failed to delete database:", error);
     }
 }
 
-export async function storeTask({ taskName, timeSpent, timestamp }: PastTaskData) {
-    const db = await initDb();
-    console.log("storeTask");
+export async function storeTask(task: PastTaskData): Promise<void> {
     try {
-        db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `INSERT INTO pastTasks (taskName, timeSpent, timestamp) VALUES ($taskName, $timeSpent, $timestamp);`)
-            await statement.executeAsync({$taskName: taskName, $timeSpent: timeSpent, $timestamp: timestamp});
-            await statement.finalizeAsync();
-            // await db.execAsync(
-            //     'INSERT INTO pastTasks (taskName, timeSpent, timestamp) VALUES (?, ?, ?);',
-            //     [taskName, timeSpent, timestamp]
-            // );
-        });
+        const { taskName, timeSpent, timestamp } = task;
+        await executeQuery(
+            'INSERT INTO pastTasks (taskName, timeSpent, timestamp) VALUES (?, ?, ?);',
+            [taskName, timeSpent, timestamp]
+        );
     } catch (error) {
         console.error("Failed to store task:", error);
     }
 }
 
-export async function storeNewTaskItem({ taskName, category, icon }: TaskItem) {
-    const db = await initDb();
-    console.log("storeTaskItem");
+export async function storeNewTaskItem(task: TaskItem): Promise<void> {
     try {
-        db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `INSERT INTO taskList (taskName, category, icon) VALUES ($taskName, $category, $icon);`)
-            await statement.executeAsync({$taskName: taskName, $category: category, $icon: icon});
-            await statement.finalizeAsync();
-        });
+        const { taskName, category, icon } = task;
+        await executeQuery(
+            'INSERT INTO taskList (taskName, category, icon) VALUES (?, ?, ?);',
+            [taskName, category, icon]
+        );
     } catch (error) {
-        console.error("Failed to store task:", error);
+        console.error("Failed to store new task item:", error);
     }
 }
 
-export async function deleteTaskFromTaskList(taskName: string) {
-    const db = await initDb();
-    console.log("delTask");
+export async function deleteTaskFromTaskList(taskName: string): Promise<void> {
     try {
-        db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `DELETE FROM taskList WHERE taskName = $taskName;`)
-            await statement.executeAsync({$taskName: taskName});
-            await statement.finalizeAsync();
-            // await db.execAsync('DELETE FROM taskList WHERE taskName = ?;', [taskName]);
-        });
+        await executeQuery('DELETE FROM taskList WHERE taskName = ?;', [taskName]);
     } catch (error) {
-        console.error("Failed to delete task:", error);
+        console.error("Failed to delete task from task list:", error);
     }
 }
 
 export async function getPastTasks(): Promise<PastTaskData[]> {
-    const db = await initDb();
-    console.log("getPastTasks");
     try {
-        db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `SELECT * FROM pastTasks;`)
-            await statement.executeAsync();
-            await statement.finalizeAsync();
-        });
-        // return await db.getAllAsync('SELECT * FROM pastTasks;');
+        return await executeQuery<PastTaskData[]>('SELECT * FROM pastTasks;');
     } catch (error) {
         console.error("Failed to get past tasks:", error);
         return [];
@@ -102,34 +119,21 @@ export async function getPastTasks(): Promise<PastTaskData[]> {
 }
 
 export async function getTaskInfo(taskName: string): Promise<TaskItem> {
-    const db = await initDb();
-    console.log("getTaskInfo");
     try {
-        await db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `SELECT * FROM taskList WHERE taskName = $taskName;`)
-            await statement.executeAsync({$taskName: taskName});
-            await statement.finalizeAsync();
-        });
-        // const r = await db.getFirstAsync('SELECT * FROM taskList WHERE taskName = ?;', [taskName]);
-        // return r ? r : { taskName: "", category: null, icon: "" } as TaskItem;
+        const result = await executeQuery<TaskItem[]>(
+            'SELECT * FROM taskList WHERE taskName = ?;',
+            [taskName]
+        );
+        return result[0] || { taskName: "", category: null, icon: "" };
     } catch (error) {
         console.error("Failed to get task info:", error);
-        return { taskName: "", category: null, icon: "" } as TaskItem;
+        return { taskName: "", category: null, icon: "" };
     }
 }
 
 export async function getTaskList(): Promise<TaskItem[]> {
-    const db = await initDb();
-    console.log("getTaskList");
     try {
-        await db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `SELECT * FROM taskList;`)
-            await statement.executeAsync();
-            await statement.finalizeAsync();
-        });
-        // return await db.getAllAsync('SELECT * FROM taskList;');
+        return await executeQuery<TaskItem[]>('SELECT * FROM taskList;');
     } catch (error) {
         console.error("Failed to get task list:", error);
         return [];
@@ -137,16 +141,8 @@ export async function getTaskList(): Promise<TaskItem[]> {
 }
 
 export async function getCategories(): Promise<{ category: string }[]> {
-    const db = await initDb();
-    console.log("getCategories");
     try {
-        await db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `SELECT * FROM categories;`)
-            await statement.executeAsync();
-            await statement.finalizeAsync();
-        });
-        // return await db.getAllAsync('SELECT * FROM categories;');
+        return await executeQuery<{ category: string }[]>('SELECT * FROM categories;');
     } catch (error) {
         console.error("Failed to get categories:", error);
         return [];
@@ -154,16 +150,10 @@ export async function getCategories(): Promise<{ category: string }[]> {
 }
 
 export async function getTaskTimeSum(): Promise<{ taskName: string, timeSpent: number }[]> {
-    const db = await initDb();
-    console.log("getTaskTimeSum");
     try {
-        await db.withTransactionAsync(async () => {
-            const statement = await db.prepareAsync(
-                `SELECT taskName, SUM(timeSpent) as timeSpent FROM pastTasks GROUP BY taskName;`)
-            await statement.executeAsync();
-            await statement.finalizeAsync();
-        });
-        // return await db.getAllAsync('SELECT taskName, SUM(timeSpent) as timeSpent FROM pastTasks GROUP BY taskName;');
+        return await executeQuery<{ taskName: string, timeSpent: number }[]>(
+            'SELECT taskName, SUM(timeSpent) as timeSpent FROM pastTasks GROUP BY taskName;'
+        );
     } catch (error) {
         console.error("Failed to get task time sum:", error);
         return [];

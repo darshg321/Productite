@@ -17,14 +17,6 @@ export default function EditTask() {
     const [categories, setCategories] = useState<{ category: string }[]>([]);
     const [iconsViewVisible, setIconsViewVisible] = useState(false);
 
-    // if (params.taskName) {
-    //     getTaskInfo(params.taskName as string).then((r: TaskItem) => {
-    //         setTaskName(r.taskName);
-    //         setCategory(r.category);
-    //         setIcon(icons[r.icon as keyof typeof icons]);
-    //     });
-    // }
-
     useEffect(() => {
         if (params.taskName) {
             getTaskInfo(params.taskName as string).then((r: TaskItem) => {
@@ -35,11 +27,8 @@ export default function EditTask() {
         }
     }, [params.taskName]);
 
-    useEffect(() => {
-        getCategories().then((r) => setCategories(r as {category: string }[]));
-    }, []);
-
-    // getCategories().then((r) => setCategories(r as { id: number, category: string }[]));
+    // FIXME bad performance
+    getCategories().then((r) => setCategories(r as { category: string }[]));
 
     function storeTaskItem() {
         storeNewTaskItem({taskName, category, icon}).then(() => {
