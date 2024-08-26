@@ -1,9 +1,9 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
 
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -15,20 +15,11 @@ export default function TabLayout() {
         headerShown: false,
       }}>
       <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="TimeTracker"
         options={{
           title: 'Time Tracker',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="clock-o" size={size} color={color} />
           ),
         }}
       />
@@ -36,8 +27,8 @@ export default function TabLayout() {
         name="TaskHistory"
         options={{
           title: 'History',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="history" size={size} color={color} />
           ),
         }}
       />
@@ -45,8 +36,8 @@ export default function TabLayout() {
         name="TaskList"
         options={{
           title: 'Task List',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="list-ul" size={size} color={color} />
           ),
         }}
       />
@@ -54,8 +45,8 @@ export default function TabLayout() {
         name="TimeChart"
         options={{
           title: 'Time Chart',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+          tabBarIcon: ({ color, size }) => (
+              <FontAwesome name="pie-chart" size={size} color={color} />
           ),
         }}
       />

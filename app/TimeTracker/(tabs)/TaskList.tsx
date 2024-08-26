@@ -21,7 +21,7 @@ export default function TaskList() {
 
     function editTask(taskName: string) {
         router.push({
-            pathname: '/EditTask',
+            pathname: '../EditTask',
             params: { taskName: taskName }
         });
     }
@@ -35,7 +35,7 @@ export default function TaskList() {
             </MenuProvider>
             <Pressable
                 style={styles.addButton}
-                onPress={() => { router.push('/EditTask'); }}
+                onPress={() => { router.push('../EditTask'); }}
             >
                 <AntDesign name="pluscircle" size={56} color="#007AFF" />
             </Pressable>

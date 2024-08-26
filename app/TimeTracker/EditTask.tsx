@@ -32,8 +32,8 @@ export default function EditTask() {
 
     function storeTaskItem() {
         storeNewTaskItem({ taskName, category, icon }).then(() => {
-            router.setParams();
-            router.push('/TaskList')
+            router.setParams({taskName: taskName});
+            router.push('/TimeTracker/(tabs)/TaskList')
         });
     }
 
@@ -69,7 +69,7 @@ export default function EditTask() {
                     <Image source={icons[icon as keyof typeof icons]} style={{ width: 48, height: 48 }} />
                 </Pressable>
                 <AntDesign name="checkcircleo" size={24} color="black" onPress={() => storeTaskItem()} style={styles.icon} />
-                <AntDesign name="closecircleo" size={24} color="black" onPress={() => router.push('/TaskList')} style={styles.icon} />
+                <AntDesign name="back" size={24} color="black" onPress={() => router.push('/TimeTracker/(tabs)/TaskList')} style={styles.icon} />
             </View>
             <IconsView visible={iconsViewVisible} onPressIcon={onPressIcon} onClose={() => setIconsViewVisible(false)} />
         </View>
