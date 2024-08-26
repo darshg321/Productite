@@ -12,10 +12,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderColor: 'black',
-        borderWidth: 1,
+        borderWidth: 2,
         borderRadius: 10,
-        width: "auto",
-        height: 50,
+        width: 200,
     },
     timeText: {
         fontSize: 24,

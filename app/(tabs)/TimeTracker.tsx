@@ -1,11 +1,11 @@
-import {StyleSheet, View} from "react-native";
-import {Stopwatch} from "@/components/timetracker/Stopwatch";
-import {useEffect, useState} from "react";
-import TaskStatusButtons, {TaskStatus} from "@/components/timetracker/TaskStatusButtons";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Stopwatch } from "@/components/timetracker/Stopwatch";
+import TaskStatusButtons, { TaskStatus } from "@/components/timetracker/TaskStatusButtons";
 import TasksGrid from "@/components/timetracker/TasksGrid";
-import {getTaskList, storeTask} from "@/src/Database/db";
-import {msToTime} from "@/src/Utils";
-import {TaskItem} from "@/src/types";
+import { getTaskList, storeTask } from "@/src/Database/db";
+import { msToTime } from "@/src/Utils";
+import { TaskItem } from "@/src/types";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -16,15 +16,17 @@ export default function TimeTracker() {
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
-    // FIXME bad performance
-    getTaskList().then(r => setTaskList(r as TaskItem[]));
+    // FIXME doesnt refresh the list after adding a new task probably
+    useEffect(() => {
+        getTaskList().then(r => setTaskList(r as TaskItem[]));
+    }, []);
 
     function startTask(taskName: string) {
         setTimeSpent(0);
         setTotalPausedDuration(0);
         setTaskStatus(TaskStatus.running);
         setStartTime(Date.now());
-        setTaskName(taskName)
+        setTaskName(taskName);
     }
 
     function stopTask() {
@@ -53,7 +55,7 @@ export default function TimeTracker() {
         if (taskStatus === TaskStatus.running) {
             interval = setInterval(() => {
                 const now = Date.now();
-                if (timeSpent < 1187900) { // 23 hours 59 minutes 59 seconds
+                if (timeSpent < 86340000) { // 23 hours 59 minutes
                     setTimeSpent(now - startTime - totalPausedDuration);
                 } else {
                     stopTask();
@@ -70,14 +72,24 @@ export default function TimeTracker() {
 
     return (
         <View style={styles.container}>
-            <TasksGrid data={taskList} onPress={(taskName: string) => {
-                if (taskStatus == TaskStatus.notStarted) {
-                    startTask(taskName)
-                }}}>
-            </TasksGrid>
-            <Stopwatch time={msToTime(timeSpent)} style={styles.stopwatch}/>
-            <TaskStatusButtons style={styles.taskStatusButtons} taskStatus={taskStatus} onPressPause={pauseTask} onPressPlay={playTask}
-                               onPressStop={stopTask}/>
+            <TasksGrid
+                data={taskList}
+                onPress={(taskName: string) => {
+                    if (taskStatus === TaskStatus.notStarted) {
+                        startTask(taskName);
+                    }
+                }}
+            />
+            <View style={styles.timerContainer}>
+                <Stopwatch time={msToTime(timeSpent)} style={styles.stopwatch} />
+                <TaskStatusButtons
+                    style={styles.taskStatusButtons}
+                    taskStatus={taskStatus}
+                    onPressPause={pauseTask}
+                    onPressPlay={playTask}
+                    onPressStop={stopTask}
+                />
+            </View>
         </View>
     );
 }
@@ -85,27 +97,29 @@ export default function TimeTracker() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f0f0f0',
-        padding: 20,
+        backgroundColor: '#F2F2F7',
+        padding: 16,
+    },
+    timerContainer: {
+        alignItems: 'center',
+        marginTop: 24,
     },
     stopwatch: {
-        borderColor: '#000',
-        borderWidth: 1,
-        borderRadius: 10,
-        padding: 10,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 16,
+        padding: 16,
         width: 200,
-        height: 50,
+        height: 80,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#fff',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
         elevation: 3,
-        marginVertical: 20,
+        marginBottom: 24,
     },
     taskStatusButtons: {
-        marginVertical: 20,
+        marginTop: 16,
     },
 });

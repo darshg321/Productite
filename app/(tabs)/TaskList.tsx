@@ -1,10 +1,10 @@
-import { View, StyleSheet } from "react-native";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import {View, StyleSheet, TouchableOpacity, Pressable} from "react-native";
+import { router } from "expo-router";
+import { AntDesign } from '@expo/vector-icons';
+import { MenuProvider } from "react-native-popup-menu";
 import { deleteTaskFromTaskList, getTaskList } from "@/src/Database/db";
 import TaskListView from "@/components/timetracker/TaskListView";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import { router } from "expo-router";
-import { MenuProvider } from "react-native-popup-menu";
 import { TaskItem } from "@/src/types";
 
 export default function TaskList() {
@@ -22,7 +22,7 @@ export default function TaskList() {
     function editTask(taskName: string) {
         router.push({
             pathname: '/EditTask',
-            params: {taskName: taskName}
+            params: { taskName: taskName }
         });
     }
 
@@ -33,31 +33,36 @@ export default function TaskList() {
                     <TaskListView data={taskList} onPressEdit={editTask} onPressDelete={deleteTask} />
                 </View>
             </MenuProvider>
-            <AntDesign style={styles.addButton} name="pluscircleo" size={40} color="#61dafb" onPress={() => { router.push('/EditTask'); }} />
+            <Pressable
+                style={styles.addButton}
+                onPress={() => { router.push('/EditTask'); }}
+            >
+                <AntDesign name="pluscircle" size={56} color="#007AFF" />
+            </Pressable>
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f0f0f0',
-        padding: 20,
+        backgroundColor: '#F2F2F7',
+        padding: 16,
     },
     taskListViewContainer: {
         flex: 1,
         width: '100%',
-        padding: 20,
     },
     addButton: {
-        marginTop: 20,
-        backgroundColor: '#fff',
-        borderRadius: 20,
-        padding: 10,
+        position: 'absolute',
+        right: 24,
+        bottom: 24,
+        backgroundColor: 'white',
+        borderRadius: 28,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
+        shadowRadius: 4,
+        elevation: 5,
     },
 });

@@ -1,78 +1,102 @@
-import {FlatList, StyleSheet, Text, View} from "react-native";
-import EditTaskBox from "@/components/timetracker/TaskListBox";
-import Entypo from "@expo/vector-icons/Entypo";
-import Feather from "@expo/vector-icons/Feather";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import {Menu, MenuOption, MenuOptions, MenuTrigger} from "react-native-popup-menu";
-import {TaskItem} from "@/src/types";
+import React from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { Menu, MenuOption, MenuOptions, MenuTrigger } from "react-native-popup-menu";
+import { Entypo, Feather, AntDesign } from "@expo/vector-icons";
+import TaskListBox from "@/components/timetracker/TaskListBox";
+import { TaskItem } from "@/src/types";
 
-export default function TaskListView(props: { data: TaskItem[],
-    onPressEdit: (taskName: string) => void, onPressDelete: (taskName: string) => void}) {
+interface TaskListViewProps {
+    data: TaskItem[];
+    onPressEdit: (taskName: string) => void;
+    onPressDelete: (taskName: string) => void;
+}
 
-    function renderItem({ item }: { item: TaskItem }) {
-        return (
-            <View style={styles.itemContainer}>
-                <EditTaskBox taskName={item.taskName} category={item.category} icon={item.icon} />
-                <Menu>
-                    <MenuTrigger>
-                        <Entypo name="dots-three-vertical" size={24} color="black"/>
-                    </MenuTrigger>
-                    <MenuOptions>
-                        <MenuOption onSelect={() => props.onPressEdit(item.taskName)} style={styles.menuOption}>
-                            <Feather name="edit" size={24} color="white" />
-                            <Text style={styles.menuText}>Edit</Text>
-                        </MenuOption>
-                        <MenuOption onSelect={() => props.onPressDelete(item.taskName)} style={styles.menuOption}>
-                            <AntDesign name="delete" size={24} color="white" />
-                            <Text style={styles.menuText}>Delete</Text>
-                        </MenuOption>
-                    </MenuOptions>
-                </Menu>
+export default function TaskListView({ data, onPressEdit, onPressDelete }: TaskListViewProps) {
+    const renderItem = ({ item }: { item: TaskItem }) => (
+        <View style={styles.itemContainer}>
+            <View style={styles.taskBoxContainer}>
+                <TaskListBox taskName={item.taskName} category={item.category} icon={item.icon} />
             </View>
-        );
-    }
+            <Menu>
+                <MenuTrigger>
+                    <View style={styles.menuTrigger}>
+                        <Entypo name="dots-three-vertical" size={20} color="#8E8E93" />
+                    </View>
+                </MenuTrigger>
+                <MenuOptions customStyles={menuOptionsStyles}>
+                    <MenuOption onSelect={() => onPressEdit(item.taskName)}>
+                        <View style={styles.menuOption}>
+                            <Feather name="edit" size={18} color="#007AFF" />
+                            <Text style={styles.menuText}>Edit</Text>
+                        </View>
+                    </MenuOption>
+                    <MenuOption onSelect={() => onPressDelete(item.taskName)}>
+                        <View style={styles.menuOption}>
+                            <AntDesign name="delete" size={18} color="#FF3B30" />
+                            <Text style={[styles.menuText, styles.deleteText]}>Delete</Text>
+                        </View>
+                    </MenuOption>
+                </MenuOptions>
+            </Menu>
+        </View>
+    );
 
     return (
-        <View style={styles.wrapper}>
-            <FlatList
-                data={props.data}
-                renderItem={renderItem}
-                contentContainerStyle={styles.container}
-            />
-        </View>
+        <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.taskName}
+            contentContainerStyle={styles.container}
+        />
     );
 }
 
 const styles = StyleSheet.create({
-    wrapper: {
-        flex: 1,
-        backgroundColor: '#f0f0f0',
-        padding: 20,
-    },
     container: {
-        padding: 20,
+        paddingVertical: 16,
     },
     itemContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 10,
-        backgroundColor: '#fff',
-        margin: 5,
-        borderRadius: 10,
+        marginBottom: 12,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
         elevation: 3,
+    },
+    taskBoxContainer: {
+        flex: 1,
+    },
+    menuTrigger: {
+        padding: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     menuOption: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 10,
+        padding: 12,
     },
     menuText: {
-        color: '#000',
-        marginLeft: 10,
+        fontSize: 16,
+        marginLeft: 12,
+        color: '#1C1C1E',
+    },
+    deleteText: {
+        color: '#FF3B30',
     },
 });
+
+const menuOptionsStyles = {
+    optionsContainer: {
+        borderRadius: 12,
+        padding: 0,
+        width: 140,
+    },
+    optionWrapper: {
+        padding: 0,
+    },
+};

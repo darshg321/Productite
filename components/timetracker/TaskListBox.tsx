@@ -1,6 +1,7 @@
+import React from "react";
 import { View, StyleSheet, Image, Text } from "react-native";
-import {icons} from "@/src/Utils";
-import {TaskItem} from "@/src/types";
+import { icons } from "@/src/Utils";
+import { TaskItem } from "@/src/types";
 
 export default function TaskListBox(props: TaskItem) {
     return (
@@ -18,34 +19,25 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 10,
-        backgroundColor: '#fff',
-        margin: 5,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-        flex: 1,
+        padding: 16,
     },
     icon: {
-        width: 60,
-        height: 60,
+        width: 40,
+        height: 40,
         resizeMode: 'contain',
+        marginRight: 16,
     },
     textContainer: {
         flex: 1,
-        marginLeft: 10,
     },
     taskName: {
-        color: '#000',
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: '600',
+        color: '#1C1C1E',
+        marginBottom: 4,
     },
     category: {
-        color: '#000',
         fontSize: 14,
+        color: '#8E8E93',
     },
 });

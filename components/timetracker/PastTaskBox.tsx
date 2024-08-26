@@ -1,15 +1,35 @@
-import {Text, View, StyleSheet} from "react-native";
-import {PastTaskData} from "@/src/types";
-import {msToTime} from "@/src/Utils";
+import React from "react";
+import { Text, View, StyleSheet, Image } from "react-native";
+import { PastTaskData, TaskItem } from "@/src/types";
+import { icons, msToTime } from "@/src/Utils";
 
-export default function PastTaskBox(props: PastTaskData) {
+interface PastTaskBoxProps {
+    taskData: PastTaskData;
+    taskInfo: TaskItem;
+}
+
+export default function PastTaskBox({ taskData, taskInfo }: PastTaskBoxProps) {
     return (
         <View style={styles.container}>
-            <View style={styles.textContainer}>
-                <Text style={styles.taskText}>{props.taskName}</Text>
-                <Text style={styles.timestamp}>{props.timestamp}</Text>
+            <View style={styles.iconContainer}>
+                <Image source={icons[taskInfo.icon as keyof typeof icons]} style={styles.icon} />
             </View>
-            <Text style={styles.timeText}>{msToTime(props.timeSpent)}</Text>
+            <View style={styles.contentContainer}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.taskText} numberOfLines={1} ellipsizeMode="tail">
+                        {taskData.taskName}
+                    </Text>
+                    <Text style={styles.timestamp}>
+                        {new Date(taskData.timestamp).toLocaleString().slice(0, 16) + " " + new Date(taskData.timestamp).toLocaleString().slice(20)}
+                    </Text>
+                </View>
+                <View style={styles.infoContainer}>
+                    <Text style={styles.timeText}>{msToTime(taskData.timeSpent)}</Text>
+                    <View style={styles.categoryContainer}>
+                        <Text style={styles.categoryText}>{taskInfo.category || "Uncategorized"}</Text>
+                    </View>
+                </View>
+            </View>
         </View>
     );
 }
@@ -17,32 +37,59 @@ export default function PastTaskBox(props: PastTaskData) {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 15,
-        marginVertical: 5,
-        backgroundColor: '#fff',
-        borderRadius: 10,
+        padding: 16,
+        marginVertical: 8,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
         shadowColor: '#000',
-        shadowOffset: {width: 0, height: 2},
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
         elevation: 3,
     },
+    iconContainer: {
+        marginRight: 16,
+    },
+    icon: {
+        width: 40,
+        height: 40,
+        resizeMode: 'contain',
+    },
+    contentContainer: {
+        flex: 1,
+    },
     textContainer: {
-        flexDirection: 'column',
+        marginBottom: 4,
     },
     taskText: {
         fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333',
+        fontWeight: '600',
+        color: '#1C1C1E',
+        marginBottom: 2,
     },
     timestamp: {
-        fontSize: 14,
-        color: '#666',
+        fontSize: 12,
+        color: '#8E8E93',
+    },
+    infoContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     timeText: {
         fontSize: 14,
-        color: '#333',
+        fontWeight: '500',
+        color: '#1C1C1E',
+    },
+    categoryContainer: {
+        backgroundColor: '#F2F2F7',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
+    },
+    categoryText: {
+        fontSize: 12,
+        color: '#8E8E93',
     },
 });
