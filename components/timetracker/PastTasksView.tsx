@@ -17,10 +17,7 @@ export default function PastTasksView(props: { data: PastTaskData[] }) {
     function renderItem({ item }: { item: PastTaskData }) {
         const taskInfo = taskInfoDict[item.taskName];
         return (
-            <PastTaskBox
-                taskData={item}
-                taskInfo={taskInfo}
-            />
+            <PastTaskBox taskData={item} taskInfo={taskInfo} />
         );
     }
 

@@ -12,3 +12,10 @@ export type PastTaskData = {
     timeSpent: number,
     timestamp: number,
 };
+
+export type TodoItem = {
+    id?: number,
+    todoName: string,
+    dueTime?: number,
+    isCompleted: boolean,
+};
