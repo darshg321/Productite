@@ -12,7 +12,7 @@ export default function PastTaskBox({ taskData, taskInfo }: PastTaskBoxProps) {
     return (
         <View style={styles.container}>
             <View style={styles.iconContainer}>
-                <Image source={icons[taskInfo.icon as keyof typeof icons]} style={styles.icon} />
+                <Image source={icons[(taskInfo ? taskInfo.icon : "defaultIcon") as keyof typeof icons]} style={styles.icon} />
             </View>
             <View style={styles.contentContainer}>
                 <View style={styles.textContainer}>
@@ -26,7 +26,7 @@ export default function PastTaskBox({ taskData, taskInfo }: PastTaskBoxProps) {
                 <View style={styles.infoContainer}>
                     <Text style={styles.timeText}>{msToTime(taskData.timeSpent)}</Text>
                     <View style={styles.categoryContainer}>
-                        <Text style={styles.categoryText}>{taskInfo.category || "Uncategorized"}</Text>
+                        <Text style={styles.categoryText}>{taskInfo ? taskInfo.category || "Uncategorized": "Uncategorized"}</Text>
                     </View>
                 </View>
             </View>

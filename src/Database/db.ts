@@ -124,10 +124,10 @@ export async function getTaskInfo(taskName: string): Promise<TaskItem> {
             'SELECT * FROM taskList WHERE taskName = ?;',
             [taskName]
         );
-        return result[0] || { taskName: "", category: null, icon: "" };
+        return result[0] || { taskName: "", category: null, icon: "defaultIcon" };
     } catch (error) {
         console.error("Failed to get task info:", error);
-        return { taskName: "", category: null, icon: "" };
+        return { taskName: "", category: null, icon: "defaultIcon" };
     }
 }
 
