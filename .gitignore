@@ -18,7 +18,6 @@ web-build/
 
 expo-env.d.ts
 # @end expo-cli
-apptodo.md
 .vscode
 .idea
 *.aab
