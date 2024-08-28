@@ -31,7 +31,7 @@ export default function RootLayout() {
                     }}
                 />
                 <Drawer.Screen
-                    name="TodoList/TodoList"
+                    name="TodoList/index"
                     options={{
                         drawerLabel: 'Todo List',
                         title: 'Todo List',

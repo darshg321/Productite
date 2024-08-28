@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system';
 import { Asset } from "expo-asset";
 import {PastTaskData, TaskItem, TodoItem} from "@/src/types";
 
-const DB_NAME = "Productite.sqlite";
+const DB_NAME = "Productite.db";
 const SQL_DIR = FileSystem.documentDirectory + "SQLite/";
 
 let db: SQLite.SQLiteDatabase | null = null;
@@ -67,11 +67,7 @@ export async function clearPastTasks(): Promise<void> {
 export async function deleteDb(): Promise<void> {
     try {
         const dbPath = SQL_DIR + DB_NAME;
-        const { exists } = await FileSystem.getInfoAsync(dbPath);
-        if (exists) {
-            await FileSystem.deleteAsync(dbPath);
-        }
-        db = null; // Reset the database connection
+        await FileSystem.deleteAsync(dbPath);
     } catch (error) {
         console.error("Failed to delete database:", error);
     }
@@ -164,7 +160,7 @@ export async function getTaskTimeSum(): Promise<{ taskName: string, timeSpent: n
 
 export async function getTodoList(): Promise<TodoItem[]> {
     try {
-        return await executeQuery<TodoItem[]>('SELECT * FROM todoList;');
+        return await executeQuery('SELECT * FROM todoList;');
     } catch (error) {
         console.error("Failed to get todo list:", error);
         return [];
@@ -173,8 +169,8 @@ export async function getTodoList(): Promise<TodoItem[]> {
 
 export async function storeTodoItem(todoItem: TodoItem): Promise<void> {
     try {
-        await executeQuery('INSERT INTO todoList (todoName, dueTime, isCompleted) VALUES (?);',
-            [todoItem.todoName, todoItem.dueTime || null, todoItem.isCompleted]); // FIXME
+        await executeQuery('INSERT INTO todoList (todoName, dueTime, isCompleted) VALUES (?, ?, ?);',
+            [todoItem.todoName, todoItem.dueTime, todoItem.isCompleted]); // FIXME
     } catch (error) {
         console.error("Failed to store todo item:", error);
     }

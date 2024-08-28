@@ -3,7 +3,7 @@ import {router} from "expo-router";
 import React, {useEffect} from "react";
 import TodoCreate from "@/components/todolist/TodoCreate";
 import TodoListView from "@/components/todolist/TodoListView";
-import { getTodoList } from "@/src/Database/db";
+import {getTodoList, storeTodoItem} from "@/src/Database/db";
 import {TodoItem} from "@/src/types";
 
 export default function TodoList() {
@@ -14,15 +14,24 @@ export default function TodoList() {
         getTodoList().then(r => setTodoList(r));
     }, []);
 
+    console.log(todoName);
+
     function createTask() {
-        router.setParams({ todoName: todoName });
-        router.push('EditTodo');
+        if (todoName === '') {
+            router.setParams({ todoName: todoName });
+            router.push('/TodoList/EditTodo');
+        } else {
+            storeTodoItem({ todoName: todoName, dueTime: null, isCompleted: false }).then(async () => {
+                getTodoList().then(r => setTodoList(r));
+            });
+            setTodoName('');
+        }
     }
 
     return (
         <View>
             <TodoListView todoList={todoList} />
-            <TodoCreate onChangeText={setTodoName} onCreateTask={createTask} />
+            <TodoCreate onChangeText={setTodoName} onCreateTask={createTask} value={todoName} />
         </View>
     )
 }
