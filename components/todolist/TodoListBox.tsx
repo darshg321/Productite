@@ -1,5 +1,5 @@
-import { Text, View, StyleSheet } from "react-native";
 import React from "react";
+import { Text, View, StyleSheet } from "react-native";
 import { TodoItem } from "@/src/types";
 
 export default function TodoListBox(props: TodoItem) {
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 3,
     },
@@ -50,8 +50,8 @@ const styles = StyleSheet.create({
     },
     timeText: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#333333',
+        fontWeight: '500',
+        color: '#666666',
         marginRight: 8,
     },
 });

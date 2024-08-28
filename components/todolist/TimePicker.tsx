@@ -4,25 +4,30 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 
 interface TimePickerParams {
     show: boolean;
+    onChangeDate: (date: Date) => void;
+    onChangeTime: (time: Date) => void;
 }
 
 export default function TimePicker(props: TimePickerParams) {
     const [date, setDate] = useState<Date>(new Date(Date.now()));
     const [time, setTime] = useState<Date>(new Date(Date.now()));
-    const [currentDate, setCurrentDate] = useState<Date>(new Date(Date.now()));
+    const [currentDate, setCurrentDate] = useState<Date>(() => {
+        const currentDate = new Date();
+        return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    });
     const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
-    const [showDatePicker, setShowDatePicker] = useState<boolean>(true);
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
     return (
-        <Modal animationType={'none'} visible={props.show}>
+        // <Modal animationType={'none'} visible={props.show}>
             <View style={styles.container}>
                 <View style={styles.dateTimeContainer}>
                     <Pressable onPress={() => {
                         setShowTimePicker(false);
                         setShowDatePicker(true);
                     }}>
-                        <Text style={styles.text}>{date.toLocaleDateString()}</Text>
+                        <Text style={styles.text}>{date.toLocaleDateString('en-ca', { weekday: "long", month: "long", day: "numeric"})}</Text>
                     </Pressable>
                     <Text style={styles.text}> | </Text>
                     <Pressable onPress={() => {
@@ -40,6 +45,7 @@ export default function TimePicker(props: TimePickerParams) {
                     onChange={(event, selectedDate) => {
                         setShowDatePicker(false);
                         setDate(selectedDate || date);
+                        props.onChangeDate(selectedDate || date);
                     }}
                     minimumDate={currentDate}
                 />}
@@ -51,11 +57,12 @@ export default function TimePicker(props: TimePickerParams) {
                     onChange={(event, selectedTime) => {
                         setShowTimePicker(false);
                         setTime(selectedTime || time);
+                        props.onChangeTime(selectedTime || time);
                     }}
                     minimumDate={currentTime}
                 />}
             </View>
-        </Modal>
+        // </Modal>
     );
 }
 

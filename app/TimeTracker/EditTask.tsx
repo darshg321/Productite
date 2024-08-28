@@ -19,7 +19,6 @@ export default function EditTask() {
 
     useEffect(() => {
         if (params.taskName) {
-            console.log("Getting task info for", params.taskName);
             getTaskInfo(params.taskName as string).then((r: TaskItem) => {
                 setTaskName(r.taskName);
                 setCategory(r.category);
@@ -32,7 +31,6 @@ export default function EditTask() {
 
     function storeTaskItem() {
         storeNewTaskItem({ taskName, category, icon }).then(() => {
-            router.setParams({taskName: taskName});
             router.push('/TimeTracker/(tabs)/TaskList')
         });
     }
