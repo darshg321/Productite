@@ -1,10 +1,10 @@
-import {View, StyleSheet} from "react-native";
-import {router} from "expo-router";
-import React, {useEffect} from "react";
+import { View, StyleSheet } from "react-native";
+import { router } from "expo-router";
+import React, { useEffect } from "react";
 import TodoCreate from "@/components/todolist/TodoCreate";
 import TodoListView from "@/components/todolist/TodoListView";
-import {getTodoList, storeTodoItem} from "@/src/Database/db";
-import {TodoItem} from "@/src/types";
+import { getTodoList, storeTodoItem } from "@/src/Database/db";
+import { TodoItem } from "@/src/types";
 
 export default function TodoList() {
     const [todoName, setTodoName] = React.useState<string>('');
@@ -14,35 +14,37 @@ export default function TodoList() {
         getTodoList().then(r => setTodoList(r));
     }, []);
 
-    console.log(todoName);
-
     function createTask() {
-        if (todoName === '') {
-            router.setParams({ todoName: todoName });
-            router.push('/TodoList/EditTodo');
-        } else {
-            storeTodoItem({ todoName: todoName, dueTime: null, isCompleted: false }).then(async () => {
+        if (todoName) {
+            storeTodoItem({todoName: todoName, dueTime: null, isCompleted: false}).then(async () => {
                 getTodoList().then(r => setTodoList(r));
             });
             setTodoName('');
+        } else {
+            router.push('/TodoList/EditTodo');
         }
     }
 
     return (
-        <View>
-            <TodoListView todoList={todoList} />
+        <View style={styles.container}>
+            {/*<View>*/}
+                <TodoListView todoList={todoList} />
+            {/*</View>*/}
             <TodoCreate onChangeText={setTodoName} onCreateTask={createTask} value={todoName} />
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    addButton: {
-        position: 'absolute',
-        right: 24,
-        bottom: 24,
-        backgroundColor: 'white',
-        borderRadius: 50,
-        elevation: 5,
+    container: {
+        flex: 1,
+        padding: 16,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
 });

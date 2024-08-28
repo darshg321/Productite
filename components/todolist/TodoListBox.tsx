@@ -1,6 +1,6 @@
-import {Text, View, StyleSheet} from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 import React from "react";
-import {TodoItem} from "@/src/types";
+import { TodoItem } from "@/src/types";
 
 export default function TodoListBox(props: TodoItem) {
     return (
@@ -13,7 +13,7 @@ export default function TodoListBox(props: TodoItem) {
             <View style={styles.infoContainer}>
                 <Text style={styles.timeText}>
                     {props.dueTime ? new Date(props.dueTime).toLocaleString().slice(0, 16) + " " +
-                        new Date(props.dueTime).toLocaleString().slice(20): "No due time"}
+                        new Date(props.dueTime).toLocaleString().slice(20) : "No due time"}
                 </Text>
             </View>
         </View>
@@ -30,20 +30,9 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
+        shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-    },
-    iconContainer: {
-        marginRight: 16,
-    },
-    icon: {
-        width: 40,
-        height: 40,
-        resizeMode: 'contain',
-    },
-    contentContainer: {
-        flex: 1,
     },
     textContainer: {
         flex: 1,
@@ -55,10 +44,6 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#333333',
     },
-    timestamp: {
-        fontSize: 12,
-        color: '#666666',
-    },
     infoContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -68,14 +53,5 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#333333',
         marginRight: 8,
-    },
-    categoryContainer: {
-        padding: 4,
-        borderRadius: 4,
-        backgroundColor: '#F0F0F0',
-    },
-    categoryText: {
-        fontSize: 12,
-        color: '#666666',
     },
 });
