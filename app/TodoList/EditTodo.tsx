@@ -2,6 +2,7 @@ import {useEffect, useState} from "react";
 import {useLocalSearchParams} from "expo-router";
 import {Pressable, Text, TextInput, View} from "react-native";
 import DateTimePicker from '@react-native-community/datetimepicker';
+import TimePicker from "@/components/todolist/TimePicker";
 
 
 export default function EditTodo() {
@@ -28,15 +29,7 @@ export default function EditTodo() {
                     <Text>Time</Text>
                 </Pressable>
             </View>
-            {datePickerVisible && <DateTimePicker
-                value={dueTime}
-                mode={'datetime'}
-                display={'default'}
-                onChange={(e, selectedDate) => {
-                    setDueTime(selectedDate || dueTime)
-                }}
-                minimumDate={currentDate}
-            />}
+            <TimePicker show={datePickerVisible} />
         </View>
     )
 }
