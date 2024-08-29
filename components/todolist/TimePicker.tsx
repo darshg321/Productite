@@ -1,4 +1,4 @@
-import { Modal, Pressable, Text, View, StyleSheet } from "react-native";
+import {Pressable, Text, View, StyleSheet} from "react-native";
 import {useEffect, useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
@@ -11,10 +11,6 @@ interface TimePickerParams {
 export default function TimePicker(props: TimePickerParams) {
     const [date, setDate] = useState<Date>(new Date(Date.now()));
     const [time, setTime] = useState<Date>(new Date(Date.now()));
-    const [currentDate, setCurrentDate] = useState<Date>(() => {
-        const currentDate = new Date();
-        return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-    });
     const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
@@ -49,9 +45,8 @@ export default function TimePicker(props: TimePickerParams) {
                 onChange={(event, selectedDate) => {
                     setShowDatePicker(false);
                     setDate(selectedDate || date);
-                    // props.onChangeDate(selectedDate || date);
                 }}
-                minimumDate={currentDate}
+                minimumDate={currentTime}
             />}
 
             {showTimePicker && <DateTimePicker
@@ -61,7 +56,6 @@ export default function TimePicker(props: TimePickerParams) {
                 onChange={(event, selectedTime) => {
                     setShowTimePicker(false);
                     setTime(selectedTime || time);
-                    // props.onChangeTime(selectedTime || time);
                 }}
                 minimumDate={currentTime}
             />}

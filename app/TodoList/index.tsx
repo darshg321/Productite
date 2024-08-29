@@ -3,17 +3,17 @@ import { router } from "expo-router";
 import React, { useEffect } from "react";
 import TodoCreate from "@/components/todolist/TodoCreate";
 import TodoListView from "@/components/todolist/TodoListView";
-import { getTodoList, storeTodoItem } from "@/src/Database/db";
+import {completeTodoItem, deleteTodoItem, getTodoList, storeTodoItem} from "@/src/Database/db";
 import { TodoItem } from "@/src/types";
+import {MenuProvider} from "react-native-popup-menu";
 
 export default function TodoList() {
     const [todoName, setTodoName] = React.useState<string>('');
     const [todoList, setTodoList] = React.useState<TodoItem[]>([]);
-    const [refresh, setRefresh] = React.useState<boolean>(false);
 
     useEffect(() => {
         getTodoList().then(r => setTodoList(r));
-    }, [refresh]);
+    }, []);
 
     function createTask() {
         if (todoName) {
@@ -27,11 +27,30 @@ export default function TodoList() {
         }
     }
 
+    function completeTodo(todoName: string) {
+        completeTodoItem(todoName).then(async () => {
+            getTodoList().then(r => setTodoList(r));
+        });
+    }
+
+    function editTodo(todoName: string) {
+        router.setParams({todoName: todoName});
+        router.push('/TodoList/EditTodo');
+    }
+
+    function deleteTodo(todoName: string) {
+        deleteTodoItem(todoName).then(async () => {
+            getTodoList().then(r => setTodoList(r));
+        });
+    }
+
     return (
         <View style={styles.container}>
-            {/*<View>*/}
-                <TodoListView todoList={todoList} />
-            {/*</View>*/}
+            <MenuProvider>
+                <View style={styles.container}>
+                    <TodoListView todoList={todoList} onPressComplete={completeTodo} onPressEdit={editTodo} onPressDelete={deleteTodo}/>
+                </View>
+            </MenuProvider>
             <TodoCreate onChangeText={setTodoName} onCreateTask={createTask} value={todoName} />
         </View>
     )

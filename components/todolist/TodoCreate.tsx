@@ -9,12 +9,13 @@ export default function TodoCreate(props: { value: string; onChangeText: (text: 
                 style={styles.input}
                 value={props.value}
                 onChangeText={props.onChangeText}
-                placeholder={'Create new Todo'}
+                placeholder={'Add reminder'}
+                placeholderTextColor="#8E8E93"
                 enterKeyHint={'done'}
                 onKeyPress={e => {e.nativeEvent.key === 'Enter' && props.onCreateTask();}}
             />
             <Pressable style={styles.addButton} onPress={props.onCreateTask}>
-                <AntDesign name="pluscircle" size={56} color="#007AFF" />
+                <AntDesign name="plus" size={24} color="#FFFFFF" />
             </Pressable>
         </View>
     )
@@ -22,32 +23,25 @@ export default function TodoCreate(props: { value: string; onChangeText: (text: 
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFFFFF',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#1C1C1E',
         borderRadius: 12,
-        padding: 16,
+        padding: 8,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 3,
     },
     input: {
+        flex: 1,
         fontSize: 16,
+        color: '#FFFFFF',
         padding: 12,
-        borderRadius: 8,
-        backgroundColor: '#F2F2F7',
     },
     addButton: {
-        position: 'absolute',
-        right: 24,
-        bottom: 24,
-        backgroundColor: 'white',
-        borderRadius: 50,
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        backgroundColor: '#007AFF',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });

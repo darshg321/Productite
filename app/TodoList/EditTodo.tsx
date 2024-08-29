@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {router, useLocalSearchParams} from "expo-router";
 import {TextInput, View, StyleSheet, Button} from "react-native";
 import TimePicker from "@/components/todolist/TimePicker";
-import {storeTodoItem} from "@/src/Database/db";
+import {getTodoItemInfo, storeTodoItem} from "@/src/Database/db";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function EditTodo() {
@@ -13,8 +13,15 @@ export default function EditTodo() {
     const params = useLocalSearchParams();
 
     useEffect(() => {
-        params.todoName && setTodoName(params.todoName as string);
-    }, []);
+        // params.todoName && setTodoName(params.todoName as string);
+        if (params.todoName) {
+            setTodoName(params.todoName as string);
+            getTodoItemInfo(params.todoName as string).then(r => {
+                if (r) {
+                    setDueDate(new Date(r));
+                    setDueTime(new Date(r));
+                }
+            });});
 
     function getFullDueTime(): Date | null {
         if (dueDate && dueTime) {
