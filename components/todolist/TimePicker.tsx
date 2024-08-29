@@ -1,5 +1,5 @@
 import { Modal, Pressable, Text, View, StyleSheet } from "react-native";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 interface TimePickerParams {
@@ -19,50 +19,53 @@ export default function TimePicker(props: TimePickerParams) {
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
+    useEffect(() => {
+        props.onChangeDate(date);
+        props.onChangeTime(time);
+    }, [date, time]);
+
     return (
-        // <Modal animationType={'none'} visible={props.show}>
-            <View style={styles.container}>
-                <View style={styles.dateTimeContainer}>
-                    <Pressable onPress={() => {
-                        setShowTimePicker(false);
-                        setShowDatePicker(true);
-                    }}>
-                        <Text style={styles.text}>{date.toLocaleDateString('en-ca', { weekday: "long", month: "long", day: "numeric"})}</Text>
-                    </Pressable>
-                    <Text style={styles.text}> | </Text>
-                    <Pressable onPress={() => {
-                        setShowTimePicker(true);
-                        setShowDatePicker(false);
-                    }}>
-                        <Text style={styles.text}>{time.toLocaleTimeString()}</Text>
-                    </Pressable>
-                </View>
-
-                {showDatePicker && <DateTimePicker
-                    value={date}
-                    mode={'date'}
-                    display={'inline'}
-                    onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
-                        setDate(selectedDate || date);
-                        props.onChangeDate(selectedDate || date);
-                    }}
-                    minimumDate={currentDate}
-                />}
-
-                {showTimePicker && <DateTimePicker
-                    value={time}
-                    mode={'time'}
-                    display={'inline'}
-                    onChange={(event, selectedTime) => {
-                        setShowTimePicker(false);
-                        setTime(selectedTime || time);
-                        props.onChangeTime(selectedTime || time);
-                    }}
-                    minimumDate={currentTime}
-                />}
+        <View style={styles.container}>
+            <View style={styles.dateTimeContainer}>
+                <Pressable onPress={() => {
+                    setShowTimePicker(false);
+                    setShowDatePicker(true);
+                }}>
+                    <Text style={styles.text}>{date.toLocaleDateString('en-ca', { weekday: "long", month: "long", day: "numeric"})}</Text>
+                </Pressable>
+                <Text style={styles.text}> | </Text>
+                <Pressable onPress={() => {
+                    setShowTimePicker(true);
+                    setShowDatePicker(false);
+                }}>
+                    <Text style={styles.text}>{time.toLocaleTimeString()}</Text>
+                </Pressable>
             </View>
-        // </Modal>
+
+            {showDatePicker && <DateTimePicker
+                value={date}
+                mode={'date'}
+                display={'inline'}
+                onChange={(event, selectedDate) => {
+                    setShowDatePicker(false);
+                    setDate(selectedDate || date);
+                    // props.onChangeDate(selectedDate || date);
+                }}
+                minimumDate={currentDate}
+            />}
+
+            {showTimePicker && <DateTimePicker
+                value={time}
+                mode={'time'}
+                display={'inline'}
+                onChange={(event, selectedTime) => {
+                    setShowTimePicker(false);
+                    setTime(selectedTime || time);
+                    // props.onChangeTime(selectedTime || time);
+                }}
+                minimumDate={currentTime}
+            />}
+        </View>
     );
 }
 

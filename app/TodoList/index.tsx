@@ -9,10 +9,11 @@ import { TodoItem } from "@/src/types";
 export default function TodoList() {
     const [todoName, setTodoName] = React.useState<string>('');
     const [todoList, setTodoList] = React.useState<TodoItem[]>([]);
+    const [refresh, setRefresh] = React.useState<boolean>(false);
 
     useEffect(() => {
         getTodoList().then(r => setTodoList(r));
-    }, []);
+    }, [refresh]);
 
     function createTask() {
         if (todoName) {
@@ -21,6 +22,7 @@ export default function TodoList() {
             });
             setTodoName('');
         } else {
+            router.setParams({todoName: ''});
             router.push('/TodoList/EditTodo');
         }
     }
