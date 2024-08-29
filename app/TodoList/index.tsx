@@ -1,6 +1,6 @@
 import { View, StyleSheet } from "react-native";
-import { router } from "expo-router";
-import React, { useEffect } from "react";
+import {router, useGlobalSearchParams} from "expo-router";
+import React, {useEffect, useReducer} from "react";
 import TodoCreate from "@/components/todolist/TodoCreate";
 import TodoListView from "@/components/todolist/TodoListView";
 import {completeTodoItem, deleteTodoItem, getTodoList, storeTodoItem} from "@/src/Database/db";
@@ -47,7 +47,7 @@ export default function TodoList() {
     return (
         <View style={styles.container}>
             <MenuProvider>
-                <View style={styles.container}>
+                <View style={{flex: 1}}>
                     <TodoListView todoList={todoList} onPressComplete={completeTodo} onPressEdit={editTodo} onPressDelete={deleteTodo}/>
                 </View>
             </MenuProvider>
@@ -59,7 +59,7 @@ export default function TodoList() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 16,
+        padding: 8,
         backgroundColor: '#FFFFFF',
         borderRadius: 12,
         shadowColor: '#000',

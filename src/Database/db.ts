@@ -160,7 +160,7 @@ export async function getTaskTimeSum(): Promise<{ taskName: string, timeSpent: n
 
 export async function getTodoList(): Promise<TodoItem[]> {
     try {
-        return await executeQuery('SELECT * FROM todoList WHERE isCompleted = false;');
+        return await executeQuery('SELECT * FROM todoList');
     } catch (error) {
         console.error("Failed to get todo list:", error);
         return [];
@@ -169,8 +169,7 @@ export async function getTodoList(): Promise<TodoItem[]> {
 
 export async function getTodoItemInfo(todoName: string): Promise<TodoItem> {
     try {
-        const result = await executeQuery<TodoItem[]>('SELECT * FROM todoList WHERE todoName = ?;', [todoName]);
-        return result[0] || { todoName: "", dueTime: null, isCompleted: false };
+        return await executeQuery('SELECT * FROM todoList WHERE todoName = ?;', [todoName]);
     } catch (error) {
         console.error("Failed to get todo item:", error);
         return { todoName: "", dueTime: null, isCompleted: false };

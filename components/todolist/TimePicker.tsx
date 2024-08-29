@@ -6,11 +6,13 @@ interface TimePickerParams {
     show: boolean;
     onChangeDate: (date: Date) => void;
     onChangeTime: (time: Date) => void;
+    initialDate: Date | null;
+    initialTime: Date | null;
 }
 
 export default function TimePicker(props: TimePickerParams) {
-    const [date, setDate] = useState<Date>(new Date(Date.now()));
-    const [time, setTime] = useState<Date>(new Date(Date.now()));
+    const [date, setDate] = useState<Date>(props.initialDate || new Date(Date.now()));
+    const [time, setTime] = useState<Date>(props.initialTime || new Date(Date.now()));
     const [currentTime, setCurrentTime] = useState<Date>(new Date(Date.now()));
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);

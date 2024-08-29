@@ -1,27 +1,27 @@
 import { useEffect, useState } from "react";
-import {router, useLocalSearchParams} from "expo-router";
+import {router, useGlobalSearchParams, useLocalSearchParams} from "expo-router";
 import {TextInput, View, StyleSheet, Button} from "react-native";
 import TimePicker from "@/components/todolist/TimePicker";
-import {getTodoItemInfo, storeTodoItem} from "@/src/Database/db";
+import {getTodoItemInfo, storeTodoItem, updateTodoItem} from "@/src/Database/db";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import {readableTime} from "@/src/Utils";
 
 export default function EditTodo() {
     const [todoName, setTodoName] = useState<string>('');
     const [dueDate, setDueDate] = useState<Date | null>(null);
     const [dueTime, setDueTime] = useState<Date | null>(null);
     const [datePickerVisible, setDatePickerVisible] = useState<boolean>(false);
-    const params = useLocalSearchParams();
+    const params = useGlobalSearchParams();
 
     useEffect(() => {
-        // params.todoName && setTodoName(params.todoName as string);
         if (params.todoName) {
             setTodoName(params.todoName as string);
             getTodoItemInfo(params.todoName as string).then(r => {
-                if (r) {
-                    setDueDate(new Date(r));
-                    setDueTime(new Date(r));
-                }
-            });});
+                    setDueDate(new Date(r.dueTime as number));
+                    setDueTime(new Date(r.dueTime as number));
+            });
+        }
+    }, []);
 
     function getFullDueTime(): Date | null {
         if (dueDate && dueTime) {
@@ -37,38 +37,28 @@ export default function EditTodo() {
         return null;
     }
 
-    function readableDueTime() {
-        const fullDueTime = getFullDueTime();
-        return fullDueTime
-            ? fullDueTime.toLocaleDateString('en-ca', {
-                weekday: "long",
-                month: "long",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                second: "numeric",
-                hour12: true
-            })
-            : "Set Due Time";
-    }
-
     function storeItem() {
         const fullDueTime = getFullDueTime();
         if (!todoName.trim()) {
             alert('Please enter a todo name');
-            return;
         } else if (fullDueTime && fullDueTime < new Date()) {
             alert('Due time has to be in the future');
-            return;
         } else {
-            storeTodoItem({
-                todoName: todoName.trim(),
-                dueTime: fullDueTime ? fullDueTime.getTime() : null,
-                isCompleted: false
-            }).then(() => {
-                router.setParams({todoName: ''}); // to refresh the TodoList
-                router.push('/TodoList');
-            });
+            if (params.todoName) {
+                updateTodoItem({
+                    todoName: params.todoName as string,
+                    dueTime: fullDueTime ? fullDueTime.getTime() : null,
+                    isCompleted: false
+                });
+            } else {
+                storeTodoItem({
+                    todoName: todoName.trim(),
+                    dueTime: fullDueTime ? fullDueTime.getTime() : null,
+                    isCompleted: false
+                });
+            }
+            // router.setParams({todoName: ''}); // to refresh the TodoList
+            router.push('/TodoList');
         }
     }
 
@@ -81,14 +71,14 @@ export default function EditTodo() {
                 placeholder={'Edit Todo'}
             />
             <View style={styles.timeContainer}>
-                <Button title={readableDueTime()} onPress={() => setDatePickerVisible(true)}/>
+                <Button title={getFullDueTime() ? readableTime(getFullDueTime()) : "Set Due Time"} onPress={() => setDatePickerVisible(true)}/>
                 {datePickerVisible && <AntDesign name={'closecircleo'} size={24} color={'#007AFF'} onPress={() => {
                     setDatePickerVisible(false)
                     setDueDate(null)
                     setDueTime(null)
                 }}/>}
             </View>
-            {datePickerVisible && <TimePicker show={datePickerVisible} onChangeDate={setDueDate} onChangeTime={setDueTime}/>}
+            {datePickerVisible && <TimePicker show={datePickerVisible} onChangeDate={setDueDate} onChangeTime={setDueTime} initialTime={dueTime} initialDate={dueDate}/>}
             <Button title={'Cancel'} onPress={() => router.push('/TodoList')}/>
             <Button title={'Save'} onPress={storeItem}/>
         </View>

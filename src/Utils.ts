@@ -11,6 +11,17 @@ export function msToTime(duration: number) {
     return hours + ":" + minutes + ":" + seconds;
 }
 
+export function readableTime(fullDueTime: Date): string {
+    return fullDueTime.toLocaleDateString('en-ca', {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true
+    })
+}
+
 export const icons = {
     archery: require('@/assets/images/taskicons/archery.png'),
     basketball: require('@/assets/images/taskicons/basketball.png'),
