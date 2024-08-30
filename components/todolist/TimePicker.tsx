@@ -18,22 +18,6 @@ export default function TimePicker(props: TimePickerParams) {
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
-    // const resetState = () => {
-    //     setDate(new Date(Date.now()));
-    //     setTime(new Date(Date.now()));
-    //     setCurrentTime(new Date(Date.now()));
-    //     setShowDatePicker(false);
-    //     setShowTimePicker(false);
-    // }
-    //
-    // useFocusEffect(() => {
-    //     useCallback(() => {
-    //         return () => {
-    //             resetState();
-    //         }
-    //     }, []);
-    // });
-
     useEffect(() => {
         props.onChangeDate(date);
         props.onChangeTime(time);
