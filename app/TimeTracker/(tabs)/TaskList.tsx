@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import {View, StyleSheet, TouchableOpacity, Pressable} from "react-native";
-import { router } from "expo-router";
+import { useState } from "react";
+import {View, StyleSheet, Pressable} from "react-native";
+import {router, useFocusEffect} from "expo-router";
 import { AntDesign } from '@expo/vector-icons';
 import { MenuProvider } from "react-native-popup-menu";
 import { deleteTaskFromTaskList, getTaskList } from "@/src/Database/db";
@@ -10,9 +10,9 @@ import { TaskItem } from "@/src/types";
 export default function TaskList() {
     const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
-    useEffect(() => {
+    useFocusEffect(() => {
         getTaskList().then(r => setTaskList(r as TaskItem[]));
-    }, []);
+    });
 
     function deleteTask(taskName: string) {
         deleteTaskFromTaskList(taskName);

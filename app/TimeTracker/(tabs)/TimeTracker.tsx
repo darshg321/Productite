@@ -6,6 +6,7 @@ import TasksGrid from "@/components/timetracker/TasksGrid";
 import { getTaskList, storeTask } from "@/src/Database/db";
 import { msToTime } from "@/src/Utils";
 import { TaskItem } from "@/src/types";
+import {useFocusEffect} from "expo-router";
 
 export default function TimeTracker() {
     const [taskName, setTaskName] = useState("");
@@ -16,10 +17,9 @@ export default function TimeTracker() {
     const [taskStatus, setTaskStatus] = useState(TaskStatus.notStarted);
     const [taskList, setTaskList] = useState<TaskItem[]>([]);
 
-    // FIXME doesnt refresh the list after adding a new task probably
-    useEffect(() => {
+    useFocusEffect(() => {
         getTaskList().then(r => setTaskList(r as TaskItem[]));
-    }, []);
+    });
 
     function startTask(taskName: string) {
         setTimeSpent(0);

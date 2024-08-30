@@ -3,6 +3,7 @@ import {PieChart} from "react-native-gifted-charts";
 import {useState} from "react";
 import {getTaskTimeSum} from "@/src/Database/db";
 import {PastTaskData} from "@/src/types";
+import {useFocusEffect} from "expo-router";
 
 function pastTaskDataToChartData(pastTaskData: PastTaskData[]) {
     const colors = [
@@ -17,11 +18,11 @@ function pastTaskDataToChartData(pastTaskData: PastTaskData[]) {
     });
 }
 export function TasksPieChart() {
-    const [pastTaskData, setPastTaskData]
-        = useState<PastTaskData[]>([]);
+    const [pastTaskData, setPastTaskData] = useState<PastTaskData[]>([]);
 
-    // FIXME bad performance
-    getTaskTimeSum().then(r => setPastTaskData(r as PastTaskData[]))
+    useFocusEffect(() => {
+        getTaskTimeSum().then(r => setPastTaskData(r as PastTaskData[]))
+    });
 
     return (
         <View style={styles.container}>

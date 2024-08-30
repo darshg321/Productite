@@ -1,19 +1,19 @@
 import { View, StyleSheet } from "react-native";
-import {router, useGlobalSearchParams} from "expo-router";
-import React, {useEffect, useReducer} from "react";
+import {router, useFocusEffect} from "expo-router";
 import TodoCreate from "@/components/todolist/TodoCreate";
 import TodoListView from "@/components/todolist/TodoListView";
 import {completeTodoItem, deleteTodoItem, getTodoList, storeTodoItem} from "@/src/Database/db";
 import { TodoItem } from "@/src/types";
 import {MenuProvider} from "react-native-popup-menu";
+import {useState} from "react";
 
 export default function TodoList() {
-    const [todoName, setTodoName] = React.useState<string>('');
-    const [todoList, setTodoList] = React.useState<TodoItem[]>([]);
+    const [todoName, setTodoName] = useState<string>('');
+    const [todoList, setTodoList] = useState<TodoItem[]>([]);
 
-    useEffect(() => {
+    useFocusEffect(() => {
         getTodoList().then(r => setTodoList(r));
-    }, []);
+    });
 
     function createTask() {
         if (todoName) {
@@ -22,8 +22,7 @@ export default function TodoList() {
             });
             setTodoName('');
         } else {
-            router.setParams({todoName: ''});
-            router.push('/TodoList/EditTodo');
+            router.push({pathname: '/TodoList/EditTodo', params: {todoName: undefined}});
         }
     }
 
@@ -34,8 +33,7 @@ export default function TodoList() {
     }
 
     function editTodo(todoName: string) {
-        router.setParams({todoName: todoName});
-        router.push('/TodoList/EditTodo');
+        router.push({pathname: '/TodoList/EditTodo', params: { todoName: todoName }});
     }
 
     function deleteTodo(todoName: string) {

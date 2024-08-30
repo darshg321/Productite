@@ -2,7 +2,7 @@ import { Modal, TextInput, View, StyleSheet, Image, Pressable } from "react-nati
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { getCategories, getTaskInfo, storeNewTaskItem } from "@/src/Database/db";
-import { router, useGlobalSearchParams } from "expo-router";
+import {router, useFocusEffect, useGlobalSearchParams} from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
 import IconsView from "@/components/timetracker/IconsView";
 import { icons } from "@/src/Utils";
@@ -27,7 +27,9 @@ export default function EditTask() {
         }
     }, [params.taskName]);
 
-    getCategories().then((r) => setCategories(r as { category: string }[]));
+    useFocusEffect(() => {
+        getCategories().then((r) => setCategories(r as { category: string }[]));
+    })
 
     function storeTaskItem() {
         storeNewTaskItem({ taskName, category, icon }).then(() => {

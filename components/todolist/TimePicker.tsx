@@ -17,6 +17,8 @@ export default function TimePicker(props: TimePickerParams) {
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
+    console.log(date, time)
+
     useEffect(() => {
         props.onChangeDate(date);
         props.onChangeTime(time);
