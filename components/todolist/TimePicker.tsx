@@ -1,6 +1,7 @@
 import {Pressable, Text, View, StyleSheet} from "react-native";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import {useFocusEffect} from "expo-router";
 
 interface TimePickerParams {
     show: boolean;
@@ -17,7 +18,21 @@ export default function TimePicker(props: TimePickerParams) {
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
 
-    console.log(date, time)
+    // const resetState = () => {
+    //     setDate(new Date(Date.now()));
+    //     setTime(new Date(Date.now()));
+    //     setCurrentTime(new Date(Date.now()));
+    //     setShowDatePicker(false);
+    //     setShowTimePicker(false);
+    // }
+    //
+    // useFocusEffect(() => {
+    //     useCallback(() => {
+    //         return () => {
+    //             resetState();
+    //         }
+    //     }, []);
+    // });
 
     useEffect(() => {
         props.onChangeDate(date);

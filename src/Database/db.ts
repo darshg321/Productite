@@ -72,6 +72,16 @@ export async function deleteDb(): Promise<void> {
         console.error("Failed to delete database:", error);
     }
 }
+// FIXME probably doesnt work
+export async function taskItemExists(taskName: string): Promise<boolean> {
+    try {
+        const result: TaskItem[] = await executeQuery('SELECT * FROM taskList WHERE taskName = ?;', [taskName]);
+        return result.length > 0;
+    } catch (error) {
+        console.error("Failed to check if task exists:", error);
+        return false;
+    }
+}
 
 export async function storeTask(task: PastTaskData): Promise<void> {
     try {
@@ -169,10 +179,21 @@ export async function getTodoList(): Promise<TodoItem[]> {
 
 export async function getTodoItemInfo(todoName: string): Promise<TodoItem> {
     try {
-        return await executeQuery('SELECT * FROM todoList WHERE todoName = ?;', [todoName]);
+        const r: TodoItem[] = await executeQuery('SELECT * FROM todoList WHERE todoName = ? LIMIT 1;', [todoName]);
+        return r[0]
     } catch (error) {
         console.error("Failed to get todo item:", error);
         return { todoName: "", dueTime: null, isCompleted: false };
+    }
+}
+// FIXME doesnt work
+export async function todoItemExists(todoName: string): Promise<boolean> {
+    try {
+        const r: number = await executeQuery('SELECT EXISTS(SELECT 1 FROM todoList WHERE todoName = ? LIMIT 1);', [todoName]);
+        return r > 0;
+    } catch (error) {
+        console.error("Failed to check if todo item exists:", error);
+        return false;
     }
 }
 

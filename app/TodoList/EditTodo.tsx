@@ -1,8 +1,8 @@
-import {useState} from "react";
+import {useCallback, useState} from "react";
 import {router, useFocusEffect, useLocalSearchParams} from "expo-router";
 import {TextInput, View, StyleSheet, Button} from "react-native";
 import TimePicker from "@/components/todolist/TimePicker";
-import {getTodoItemInfo, storeTodoItem, updateTodoItem} from "@/src/Database/db";
+import {getTodoItemInfo, storeTodoItem, todoItemExists, updateTodoItem} from "@/src/Database/db";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import {readableTime} from "@/src/Utils";
 
@@ -13,15 +13,32 @@ export default function EditTodo() {
     const [datePickerVisible, setDatePickerVisible] = useState<boolean>(false);
     const params = useLocalSearchParams();
 
-    useFocusEffect(() => { //FIXME add usecallback apparently
-        if (params.todoName) {
-            setTodoName(params.todoName as string);
-            getTodoItemInfo(params.todoName as string).then(r => {
-                setDueDate(new Date(r.dueTime as number));
-                setDueTime(new Date(r.dueTime as number));
-            });
-        }
-    });
+    const resetState = useCallback(() => {
+        setTodoName('');
+        setDueDate(null);
+        setDueTime(null);
+        setDatePickerVisible(false);
+    }, []);
+
+    useFocusEffect(
+        useCallback(() => {
+            if (params.todoName) {
+                setTodoName(params.todoName as string);
+                getTodoItemInfo(params.todoName as string).then(r => {
+                    if (r.dueTime) {
+                        setDueDate(new Date(r.dueTime as number));
+                        setDueTime(new Date(r.dueTime as number));
+                    }
+                });
+            } else {
+                resetState();
+            }
+
+            return () => {
+                resetState();
+            };
+        }, [params.todoName, resetState])
+    );
 
     function getFullDueTime(): Date | null {
         if (dueDate && dueTime) {
@@ -37,7 +54,7 @@ export default function EditTodo() {
         return null;
     }
 
-    function storeItem() {
+    async function storeItem() {
         const fullDueTime = getFullDueTime();
         if (!todoName.trim()) {
             alert('Please enter a todo name');
@@ -62,20 +79,13 @@ export default function EditTodo() {
     }
 
     function toTodoList() {
-        setTodoName('');
-        setDueDate(null);
-        setDueTime(null);
-        setDatePickerVisible(false);
+        resetState();
         router.push({pathname: '/TodoList', params: {todoName: undefined}});
     }
 
     function getButtonTitle() {
         const fullDueTime = getFullDueTime();
-        if (fullDueTime) {
-            return readableTime(fullDueTime);
-        } else {
-            return "Set Due Time";
-        }
+        return fullDueTime ? readableTime(fullDueTime) : "Set Due Time";
     }
 
     return (
