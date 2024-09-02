@@ -1,5 +1,9 @@
 # Productite
 
+
+https://github.com/user-attachments/assets/c4a0522d-6abe-4344-a516-8f89fc4bd274
+
+
 Productite is a React Native application designed to help users manage their time efficiently. The app provides a user-friendly interface for adding, viewing, and analyzing tasks through various features such as pie charts and history.  
 ## Current Features
 **Time Tracker**: An easy to use time tracker to track different activities.
