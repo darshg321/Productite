@@ -65,13 +65,13 @@ export default function EditTodo() {
                 updateTodoItem({
                     todoName: params.todoName as string,
                     dueTime: fullDueTime ? fullDueTime.getTime() : null,
-                    isCompleted: false
+                    isCompleted: 0
                 });
             } else {
                 storeTodoItem({
                     todoName: todoName.trim(),
                     dueTime: fullDueTime ? fullDueTime.getTime() : null,
-                    isCompleted: false
+                    isCompleted: 0
                 });
             }
             toTodoList();

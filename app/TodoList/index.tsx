@@ -1,35 +1,53 @@
-import { View, StyleSheet } from "react-native";
-import {router, useFocusEffect} from "expo-router";
+import React, {useEffect, useState} from "react";
+import {View, StyleSheet, Text, ScrollView, FlatList} from "react-native";
+import { router } from "expo-router";
 import TodoCreate from "@/components/todolist/TodoCreate";
 import TodoListView from "@/components/todolist/TodoListView";
-import {completeTodoItem, deleteTodoItem, getTodoList, storeTodoItem} from "@/src/Database/db";
+import {
+    completeTodoItem,
+    deleteTodoItem,
+    getCurrentTodoList,
+    getOverdueTodoList,
+    getCompletedTodoList,
+    storeTodoItem
+} from "@/src/Database/db";
 import { TodoItem } from "@/src/types";
-import {MenuProvider} from "react-native-popup-menu";
-import {useState} from "react";
 
 export default function TodoList() {
     const [todoName, setTodoName] = useState<string>('');
-    const [todoList, setTodoList] = useState<TodoItem[]>([]);
+    const [todoLists, setTodoLists] = useState<{ title: string; data: TodoItem[] }[]>([]);
 
-    useFocusEffect(() => {
-        getTodoList().then(r => setTodoList(r));
-    });
+    function fetchTodoLists() {
+        Promise.all([
+            getOverdueTodoList(),
+            getCurrentTodoList(),
+            getCompletedTodoList()
+        ]).then(([overdue, current, completed]) => {
+            setTodoLists([
+                { title: "Overdue", data: overdue },
+                { title: "Current", data: current },
+                { title: "Completed", data: completed }
+            ]);
+        });
+    }
+
+    useEffect(() => {
+        fetchTodoLists();
+    }, []);
 
     function createTask() {
-        if (todoName) {
-            storeTodoItem({todoName: todoName, dueTime: null, isCompleted: false}).then(async () => {
-                getTodoList().then(r => setTodoList(r));
+        if (todoName.trim()) {
+            storeTodoItem({todoName: todoName.trim(), dueTime: null, isCompleted: 0}).then(() => {
+                fetchTodoLists();
+                setTodoName('');
             });
-            setTodoName('');
         } else {
             router.push({pathname: '/TodoList/EditTodo', params: {todoName: undefined}});
         }
     }
 
     function completeTodo(todoName: string) {
-        completeTodoItem(todoName).then(async () => {
-            getTodoList().then(r => setTodoList(r));
-        });
+        completeTodoItem(todoName).then(() => fetchTodoLists());
     }
 
     function editTodo(todoName: string) {
@@ -37,32 +55,71 @@ export default function TodoList() {
     }
 
     function deleteTodo(todoName: string) {
-        deleteTodoItem(todoName).then(async () => {
-            getTodoList().then(r => setTodoList(r));
-        });
+        deleteTodoItem(todoName).then(() => fetchTodoLists());
     }
+
+    const renderItem = ({ item }: { item: { title: string; data: TodoItem[] } }) => (
+        <View style={styles.listContainer}>
+            <Text style={styles.sectionTitle}>{item.title}</Text>
+            <TodoListView
+                todoList={item.data}
+                onPressComplete={completeTodo}
+                onPressEdit={editTodo}
+                onPressDelete={deleteTodo}
+            />
+        </View>
+    );
 
     return (
         <View style={styles.container}>
-            <MenuProvider>
-                <View style={{flex: 1}}>
-                    <TodoListView todoList={todoList} onPressComplete={completeTodo} onPressEdit={editTodo} onPressDelete={deleteTodo}/>
-                </View>
-            </MenuProvider>
-            <TodoCreate onChangeText={setTodoName} onCreateTask={createTask} value={todoName} />
+            <FlatList
+                data={todoLists}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.title}
+                ListFooterComponent={
+                    <View style={styles.createTaskContainer}>
+                        <TodoCreate onChangeText={setTodoName} onCreateTask={createTask} value={todoName} />
+                    </View>
+                }
+            />
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 8,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        shadowColor: '#000',
+        backgroundColor: "#F2F2F7",
+        padding: 16,
+    },
+    scrollView: {
+        flex: 1,
+    },
+    listContainer: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        padding: 16,
+        marginBottom: 16,
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 12,
+        color: "#333",
+    },
+    createTaskContainer: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 16,
+        padding: 16,
+        marginTop: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
         shadowRadius: 4,
         elevation: 3,
     },

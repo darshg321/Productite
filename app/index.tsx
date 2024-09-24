@@ -1,4 +1,5 @@
-import { Text, View, StyleSheet, ScrollView } from "react-native";
+import {Text, View, StyleSheet, ScrollView, Pressable} from "react-native";
+import {router} from "expo-router";
 
 export default function Index() {
     return (
@@ -8,40 +9,43 @@ export default function Index() {
                 This app helps you manage your tasks, track your time, and achieve your goals. Here are some of the features:
             </Text>
             <View style={styles.featureContainer}>
-                <Text style={styles.featureTitle}>Todo List</Text>
-                <Text style={styles.featureDescription}>
-                    - Create and manage your daily tasks with reminders.
-                    - Add repeat items for everyday tasks.
-                </Text>
+                <Pressable onPress={() => router.push({ pathname: "/TodoList" })}>
+                    <Text style={styles.featureTitle}>Todo List</Text>
+                    <Text style={styles.featureDescription}>
+                        - Create and manage your daily tasks.
+                        - Add repeat items for everyday tasks.
+                        - Add due dates and reminders with notifications.
+                    </Text>
+                </Pressable>
             </View>
-            <View style={styles.featureContainer}>
-                <Text style={styles.featureTitle}>Reminders</Text>
-                <Text style={styles.featureDescription}>
-                    - Set reminders for your todos to ensure you never miss a task.
-                </Text>
-            </View>
-            <View style={styles.featureContainer}>
-                <Text style={styles.featureTitle}>Daily Diary</Text>
-                <Text style={styles.featureDescription}>
-                    - Keep a daily diary of your activities.
-                    - Sync with the todo list and time tracker.
-                    - View weekly and monthly summaries.
-                </Text>
-            </View>
-            <View style={styles.featureContainer}>
-                <Text style={styles.featureTitle}>Time Tracker</Text>
-                <Text style={styles.featureDescription}>
-                    - Track your time spent on various activities.
-                    - Export data to graphs and view specific timeframes.
-                    - Add timestamps to activities and edit history.
-                </Text>
-            </View>
-            <View style={styles.featureContainer}>
-                <Text style={styles.featureTitle}>Goals</Text>
-                <Text style={styles.featureDescription}>
-                    - Set and track goals for the time spent on different activities.
-                </Text>
-            </View>
+            <Pressable onPress={() => alert("This is an upcoming feature not implemented yet. Check back later.")}>
+                <View style={styles.featureContainer}>
+                    <Text style={styles.featureTitle}>Daily Diary</Text>
+                    <Text style={styles.featureDescription}>
+                        - Keep a daily diary of your activities.
+                        - Sync with the todo list and time tracker.
+                        - View weekly and monthly summaries.
+                    </Text>
+                </View>
+            </Pressable>
+            <Pressable onPress={() => router.push({ pathname: "/TimeTracker" })}>
+                <View style={styles.featureContainer}>
+                    <Text style={styles.featureTitle}>Time Tracker</Text>
+                    <Text style={styles.featureDescription}>
+                        - Track your time spent on various activities.
+                        - Export data to graphs and view specific timeframes.
+                        - Add timestamps to activities and edit history.
+                    </Text>
+                </View>
+            </Pressable>
+            <Pressable onPress={() => alert("This is an upcoming feature not implemented yet. Check back later.")}>
+                <View style={styles.featureContainer}>
+                    <Text style={styles.featureTitle}>Goals</Text>
+                    <Text style={styles.featureDescription}>
+                        - Set and track goals for the time spent on different activities.
+                    </Text>
+                </View>
+            </Pressable>
         </ScrollView>
     );
 }

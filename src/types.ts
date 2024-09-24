@@ -17,5 +17,5 @@ export type TodoItem = {
     id?: number,
     todoName: string,
     dueTime: number | null,
-    isCompleted: boolean,
+    isCompleted: 0 | 1,
 };

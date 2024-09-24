@@ -168,9 +168,38 @@ export async function getTaskTimeSum(): Promise<{ taskName: string, timeSpent: n
 
 // FIXME move these to a separate file
 
-export async function getTodoList(): Promise<TodoItem[]> {
+// export async function getTodoList(): Promise<TodoItem[]> {
+//     try {
+//         return await executeQuery('SELECT * FROM todoList');
+//     } catch (error) {
+//         console.error("Failed to get todo list:", error);
+//         return [];
+//     }
+// }
+
+export async function getCurrentTodoList(): Promise<TodoItem[]> {
+    const now = new Date().getTime();
     try {
-        return await executeQuery('SELECT * FROM todoList');
+        return await executeQuery('SELECT * FROM todoList WHERE (dueTime >= ? OR dueTime IS NULL) AND isCompleted = 0 ORDER BY dueTime ASC;', [now]);
+    } catch (error) {
+        console.error("Failed to get todo list:", error);
+        return [];
+    }
+}
+
+export async function getOverdueTodoList(): Promise<TodoItem[]> {
+    const now = new Date().getTime();
+    try {
+        return await executeQuery('SELECT * FROM todoList WHERE dueTime is NOT NULL AND dueTime < ? AND isCompleted = 0 ORDER BY dueTime ASC;', [now]);
+    } catch (error) {
+        console.error("Failed to get todo list:", error);
+        return [];
+    }
+}
+
+export async function getCompletedTodoList(): Promise<TodoItem[]> {
+    try {
+        return await executeQuery('SELECT * FROM todoList WHERE isCompleted = true;');
     } catch (error) {
         console.error("Failed to get todo list:", error);
         return [];
@@ -183,7 +212,7 @@ export async function getTodoItemInfo(todoName: string): Promise<TodoItem> {
         return r[0]
     } catch (error) {
         console.error("Failed to get todo item:", error);
-        return { todoName: "", dueTime: null, isCompleted: false };
+        return { todoName: "", dueTime: null, isCompleted: 0 };
     }
 }
 // FIXME doesnt work
@@ -225,7 +254,7 @@ export async function updateTodoItem(todoItem: TodoItem): Promise<void> {
 
 export async function completeTodoItem(todoName: string): Promise<void> {
     try {
-        await executeQuery('UPDATE todoList SET isCompleted = true WHERE todoName = ?;', [todoName]);
+        await executeQuery('UPDATE todoList SET isCompleted = 1 WHERE todoName = ?;', [todoName]);
     } catch (error) {
         console.error("Failed to complete todo item:", error);
     }

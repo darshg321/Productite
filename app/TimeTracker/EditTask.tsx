@@ -1,4 +1,4 @@
-import { Modal, TextInput, View, StyleSheet, Image, Pressable } from "react-native";
+import { TextInput, View, StyleSheet, Image, Pressable } from "react-native";
 import { useEffect, useState } from "react";
 import { Picker } from "@react-native-picker/picker";
 import { getCategories, getTaskInfo, storeNewTaskItem } from "@/src/Database/db";

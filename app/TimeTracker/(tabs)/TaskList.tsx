@@ -28,11 +28,11 @@ export default function TaskList() {
 
     return (
         <View style={styles.container}>
-            <MenuProvider>
+            {/*<MenuProvider>*/}
                 <View style={styles.taskListViewContainer}>
                     <TaskListView data={taskList} onPressEdit={editTask} onPressDelete={deleteTask} />
                 </View>
-            </MenuProvider>
+            {/*</MenuProvider>*/}
             <Pressable
                 style={styles.addButton}
                 onPress={() => { router.push('../EditTask'); }}
